@@ -5,12 +5,12 @@ import math
 
 def rel_vel_2_vehicles(is1, is2):
     # vel_x_direction_global_coordinate_system
-    vx1 = math.cos(is1.orientation) * is1.velocity - math.sin(is1.orientation) * is1.velocity_y
-    vx2 = math.cos(is2.orientation) * is2.velocity - math.sin(is2.orientation) * is2.velocity_y
+    vx1 = math.cos(is1.orientation) * is1.velocity 
+    vx2 = math.cos(is2.orientation) * is2.velocity 
 
     # vel_y_direction_global_coordinate_system
-    vy1 = math.cos(is1.orientation) * is1.velocity_y + math.sin(is1.orientation) * is1.velocity
-    vy2 = math.cos(is2.orientation) * is2.velocity_y + math.sin(is2.orientation) * is2.velocity
+    vy1 = math.sin(is1.orientation) * is1.velocity
+    vy2 = math.sin(is2.orientation) * is2.velocity
 
     # compute relative velocity
 
