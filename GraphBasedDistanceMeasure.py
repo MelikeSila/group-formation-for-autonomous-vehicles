@@ -11,31 +11,30 @@ for o in obstacles:
     print(x)
     print(y)
 """
-def CreateLaneletGraph(scenario):
+def CreateLaneletGraph(lanelets):
     import networkx as nx
     import matplotlib.pyplot as plt
-
+    #L is a directed graph for each of the lanelet.
+    #G is exist of graphs of lanelets and G mapped with lanelets' id
     G = nx.DiGraph()
-    GraphDict = dict()
-    lanelets = scenario.lanelet_network.lanelets
-    for i in lanelets:
-        prev = None
-        for k in i.center_vertices:
-            node = k[0]
-            G.add_node(node)
-            if prev:
-                G.add_edge(prev,node)
-            prev = node
-        GraphDict[i.lanelet_id]= G
-    return GraphDict
+    for lanelet in lanelets:
+        i = lanelet.lanelet_id
+        L = nx.DiGraph()
+        L.add_nodes_from([2,3])
+        L.add_edges_from([(3, 4), (4, 5)])
+        G.add_node(i, graph = L)  # add to G the graph of lanelet with id i
+    return G
 
 """
 Sample Using:
 
-LaneletGraphDict = createLaneletGraph(scenario)
-for i in GraphDict:
-        print("******************************************")
-        print(LaneletGraphDict[i])
-        nx.draw(LaneletGraphDict[i], with_labels=True)
+#distance
+#adj_left=None, adj_left_same_direction=None, adj_right=None, ad_right_same_direction=None, 
+#predecessor, succesor
+#line_marking_right_vertices
+lanelets = scenario.lanelet_network.lanelets
+G = CreateLaneletGraph(lanelets)
+#nx.draw(G.nodes[1]['graph']) #for reaching the graph of lanelet with id i
+nx.draw(G)
 plt.show()
 """
