@@ -11,6 +11,17 @@ for o in obstacles:
     print(x)
     print(y)
 """
+#creating edge list from lanelet distance
+#there have to be a quick way instead of using a for loop
+def CreateEdgeList(a):
+    c = []
+    prev = None
+    for i in a:
+        if prev != None:
+            c.append([int(prev),int(i)])
+        prev = i
+    return c
+
 def CreateLaneletGraph(lanelets):
     import networkx as nx
     import matplotlib.pyplot as plt
@@ -20,8 +31,11 @@ def CreateLaneletGraph(lanelets):
     for lanelet in lanelets:
         i = lanelet.lanelet_id
         L = nx.DiGraph()
-        L.add_nodes_from([1,2])
-        L.add_edges_from([(3, 4), (4, 5)])
+        #L.add_nodes_from([1,2])
+        points = list(range(1,len(l.distance)))
+        edges = CreateEdgeList(l.distance)
+        L.add_nodes_from(points, distance = l.distance, vertices=l.center_vertices)
+        L.add_edges_from(edges)
         G.add_node(i, graph = L)  # add to G the graph of lanelet with id i
     return G
 
