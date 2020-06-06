@@ -1,16 +1,15 @@
 # return initial vertex of the given obstacle ( v(c0)):
 # return x and y coordinates as numpy array [x, y]
 def v( obs):
-    return obs.initial_state.position
+    return obs.initial_center_lanelet_ids
 
 """
 Sample usage of v( obs):
 
-obstacles = scenario.obstacles
+file_path = obstacles = scenario.obstacles
 for o in obstacles:
-    x, y = v(o)
+    x= v(o)
     print(x)
-    print(y)
 """
                 ####   GRAPH   ####
 #there have to be a quick way instead of using a for loop
