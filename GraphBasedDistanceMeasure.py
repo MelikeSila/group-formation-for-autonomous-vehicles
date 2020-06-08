@@ -1,17 +1,4 @@
-# return initial vertex of the given obstacle ( v(c0)):
-# return x and y coordinates as numpy array [x, y]
-def v( obs):
-    return obs.initial_center_lanelet_ids
-
-"""
-Sample usage of v( obs):
-
-file_path = obstacles = scenario.obstacles
-for o in obstacles:
-    x= v(o)
-    print(x)
-"""
-                ####   GRAPH   ####
+##########   GRAPH   ##########
 #there have to be a quick way instead of using a for loop
 #creating edges between nodes in a lanelet
 def CreateEdgeList(p):
@@ -73,97 +60,29 @@ def CreateLaneletGraph(lanelets):
         G.add_edges_from(edgesLanelet)
     return G
 
-"""
-######## Sample Usage ############
-## First run here for testing
-## It include scenario and brief 
-## drawing
-##################################
-
-import os
-import matplotlib.pyplot as plt
-from IPython import display
-
-# import functions to read xml file and visualize commonroad objects
-from commonroad.common.file_reader import CommonRoadFileReader
-from commonroad.visualization.draw_dispatch_cr import draw_object
-
-# generate path of the file to be opened
-#file_path = "ZAM_Tutorial-1_1_T-1.xml"
-#file_path = "ZAM_Tjunction-1_66_T-1.xml"
-file_path = "CHN_Cho-2_1_T-1.xml"
-
-# read in the scenario and planning problem set
-crf = CommonRoadFileReader(file_path)
-scenario, planning_problem_set = crf.open()
-
-# plot the scenario for 40 time step, here each time step corresponds to 0.1 second
-for i in range(0, 40):
-    # uncomment to clear previous graph
-    display.clear_output(wait=True)
-    
-    plt.figure(figsize=(20, 10))
-    # plot the scenario at different time step
-    draw_object(scenario, draw_params={'time_begin': i})
-    # plot the planning problem set
-    draw_object(planning_problem_set)
-    plt.gca().set_aspect('equal')
-    plt.show()
-"""
-
-
-
-
-"""
-########## Sample Usage ###########
-Sample Usage of CreateLaneletGraph(lanelets):
-
-#distance
-# lanelet_id
-#adj_left=None, adj_left_same_direction=None, adj_right=None, ad_right_same_direction=None, 
-#predecessor, succesor
-#line_marking_right_vertices
-
-options1 = {
-    'node_color': 'lightgreen',
-    'node_size': 500,
-    'width': 1,
-}
-options2 = {
-    'node_color': 'green',
-    'node_size': 500,
-    'width': 1,
-}
-
-import networkx as nx
-lanelets = scenario.lanelet_network.lanelets
-G = CreateLaneletGraph(lanelets)
-plt.subplot(121)
-nx.draw_circular(G.nodes[lanelets[0].lanelet_id]['graph'], with_labels=True, font_weight='bold', **options1) #for reaching the graph of lanelet with id i
-plt.subplot(122)
-nx.draw_circular(G,with_labels=True, font_weight='bold', **options2)
-plt.show()
-"""
-"""
-
-########## Sample Usage ###########
-See more clear graphs and data
-
-print(G.nodes)
-plt.rcParams['figure.figsize'] = (10.0, 10.0) # set default size of plots
-plt.rcParams['image.interpolation'] = 'nearest'
-plt.rcParams['image.cmap'] = 'gray'
-nx.draw(G,with_labels=True, font_weight='bold', **options2)
-plt.show()
-i = 1
-for lanelet in lanelets:
-    print(lanelet)
-    plt.subplot(1, len(lanelets), i)
-    nx.draw(G.nodes[lanelet.lanelet_id]['graph'], with_labels=True, font_weight='bold', **options1) #for reaching the graph of lanelet with id i
-    print(lanelet.adj_left_same_direction, ": ", lanelet.adj_left)
-    print(lanelet.adj_right_same_direction, ": ", lanelet.adj_right)
-    #if 53 in G.nodes[lanelet.lanelet_id]['adj_lanelet']: #adjacent lanelet control # contain()
-    #    print(True)
-    i = i+1
-plt.show()
-"""
+########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ###################
+### the function for finding initial lanelet and its initial vertex of an obstacle and.
+###############################################################################################
+def v(obstacle, G):
+    import math
+    points = []
+    minDistances = []
+    ## iterate initial lanelets of the obstacle
+    # Question: In which situation there can be more than one itinial lanelet for a vehicle
+    for l in obstacle.initial_center_lanelet_ids:
+        distances = []
+        # iterate all nodes in a lanelet
+        for i in range(len(G.nodes[l]['graph'].nodes)):
+            #get the initial x and y of the vehicle
+            xv = obstacle.initial_state.position[0]
+            yv = obstacle.initial_state.position[1]
+            #get the x and y of the lanelet's node
+            xn = G.nodes[l]['graph'].nodes[i]['vertices'][0]
+            yn = G.nodes[l]['graph'].nodes[i]['vertices'][1]
+            ## calculate distance between the vehicle and a node
+            distances.append(math.sqrt( ( xv - xn )**2 + ( yv - yn )**2 ))
+        # get index of the nearest node to the vehicle and collect the minumum distances of lanelets
+        minDistances.append(min(distances))
+        points.append(distances.index(min(distances)))
+    index = (minDistances.index(min(minDistances)))
+    return list(obstacle.initial_center_lanelet_ids)[index], points[index]
