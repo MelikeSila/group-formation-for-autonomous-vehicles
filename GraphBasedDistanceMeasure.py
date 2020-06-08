@@ -49,7 +49,7 @@ def CreateEdgesBtwnLanelets(l):
 
 def CreateLaneletGraph(lanelets):
     import networkx as nx
-    import matplotlib.pyplot as plt
+    import numpy as np
     #L:       is a directed graph for each of the lanelet
     #G:       is exist of graphs of lanelets and G mapped with lanelets' id
     #points:  for represent the each point in a lanelet
@@ -60,13 +60,16 @@ def CreateLaneletGraph(lanelets):
         i = lanelet.lanelet_id
         L = nx.DiGraph()
         #L add nodes and edges
-        points = list(range(1,len(lanelet.distance)))
+        points = np.array(range(0,(len(lanelet.distance))))
         edges = CreateEdgeList(points)
-        L.add_nodes_from(points, distance = lanelet.distance, vertices=lanelet.center_vertices)
+        ### set each node in Lanelet one by one with its vertex and distance
+        for k in range(len(points)):
+            L.add_node(points[k], distance = lanelet.distance[k], vertices=lanelet.center_vertices[k])
+        ###
         L.add_edges_from(edges)
         #G add nodes and edges
         edgesLanelet, adjacent_lanelets = CreateEdgesBtwnLanelets(lanelet)
-        G.add_node(i, adj_lanelet = adjacent_lanelets , graph = L) #adding lanelet graph with id and adjecent lanelet
+        G.add_node(i, adj_lanelet = adjacent_lanelets , graph = L)  # adding the graph of lanelet with id i and adjecent lanelet adj_lanelet
         G.add_edges_from(edgesLanelet)
     return G
 
