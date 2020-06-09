@@ -5,7 +5,9 @@
 #there have to be a quick way instead of using a for loop
 #creating edges between nodes in a lanelet
 
+import networkx as nx
 adj_lanelet_dict = dict()
+G = nx.DiGraph()
 
 def CreateEdgeList( p):
     c = []
@@ -48,7 +50,8 @@ def CreateLaneletGraph(lanelets):
     #edges:   edges for each lanelet
     #adj_lanelet_dict:  it is for merging adj lanelets and their adj lanelets
     global adj_lanelet_dict
-    G = nx.DiGraph()
+    global G
+    
     for lanelet in lanelets:
         i = lanelet.lanelet_id
         if not adj_lanelet_dict:
@@ -102,12 +105,14 @@ def FindKeyGraphId(search_value, adj_dict):
 ########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ###################
 ### the function for finding initial lanelet and its initial vertex of an obstacle and.
 ###############################################################################################
-def v(obstacle, G):
+def V(obstacle):
     import math
+    
     points = []
     minDistances = []
     key_lanelets = []
     global adj_lanelet_dict
+    global G
     # selftest =  {53: [], 54: [55], 56: [], 57: [58], 59: [], 60: [61], 62: [], 63: [68], 64: [66], 65: [], 67: []}
     for l in obstacle.initial_center_lanelet_ids:
         key_lanelets.append(FindKeyGraphId(l,adj_lanelet_dict))
@@ -130,3 +135,12 @@ def v(obstacle, G):
         points.append(distances.index(min(distances)))
     index = (minDistances.index(min(minDistances)))
     return list(key_lanelets)[index], points[index]
+
+##########  R(v(c)) reachable vertecies by a pbstacle ##########
+###
+################################################################
+from networkx import dfs_successors
+def R(vc):
+    global G
+    reachable_vertices = dfs_successors(G, vc)
+    return reachable_vertices
