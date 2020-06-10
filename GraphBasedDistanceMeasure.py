@@ -1,14 +1,14 @@
-##########   GRAPH   ##########
-#there have to be a quick way instead of using a for loop
-#creating edges between nodes in a lanelet
-##########   GRAPH   ##########
-#there have to be a quick way instead of using a for loop
-#creating edges between nodes in a lanelet
+##############################################################################
+##########################   GRAPH ESTABLISHING   ############################
+##############################################################################
 
 import networkx as nx
 adj_lanelet_dict = dict()
 G = nx.DiGraph()
 
+##############################################################################
+########  CreateEdgeList(point_list): return edges of main graph G  ##########
+##############################################################################
 def CreateEdgeList( p):
     c = []
     prev = None
@@ -18,6 +18,9 @@ def CreateEdgeList( p):
         prev = i
     return c
 
+##############################################################################
+##  CreateEdgesBtwnLanelets(l, adj_dict): : return edges of lanelet graph L  #
+##############################################################################
 #return an array that include edges list between given lanelet  and its predessor and successor
 def CreateEdgesBtwnLanelets(l, adj_dict):
     # we can manage previously added edges in here but it can be time waste. 
@@ -41,6 +44,9 @@ def CreateEdgesBtwnLanelets(l, adj_dict):
         a.append(l.adj_right)
     return e, a
 
+##############################################################################
+####  CreateLaneletGraph(lanelets): return a Graph conssit of Lanelets  ######
+##############################################################################
 def CreateLaneletGraph(lanelets):
     import networkx as nx
     import numpy as np
@@ -59,7 +65,7 @@ def CreateLaneletGraph(lanelets):
         else:
             graph_key = FindKeyGraphId(i, adj_lanelet_dict)
         
-        # if graph_key == i then we need to create a new lanelet graph
+        # if graph_key == i then we need to create a new lanelet graph else we create "bounded lanelets"
         if graph_key == i: 
             ## Establish L
             L = nx.DiGraph()
@@ -86,6 +92,10 @@ def CreateLaneletGraph(lanelets):
         adj_lanelet_dict = adj_lanelet_dict
     return G
 
+##############################################################################
+######  FindKeyGraphId(search_value, adj_dict): return key value for G   #####
+######  It is necessary for finding "bounded lanelets" graph id          #####
+##############################################################################
 def FindKeyGraphId(search_value, adj_dict):
     values = list(adj_dict.values())
     keys = list(adj_dict.keys())
@@ -99,10 +109,13 @@ def FindKeyGraphId(search_value, adj_dict):
         key = search_value
 
     return key
+##############################################################################
+####################  FUNCTIONS IN THE PAPER  ################################
+##############################################################################
 
-##############################################################################################
-########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ##################
-##############################################################################################
+##############################################################################
+#########  V(obstacle, graph): return initial_lanelet, initial_node ##########
+##############################################################################
 def V(obstacle):
     import math
     
@@ -134,9 +147,9 @@ def V(obstacle):
     index = (minDistances.index(min(minDistances)))
     return list(key_lanelets)[index], points[index]
 
-################################################################
-##########  R(v(c)) reachable vertecies by a pbstacle ##########
-################################################################
+##############################################################################
+############  R(v(c)): return reachable vertecies by an obstacle ############
+##############################################################################
 from networkx import dfs_successors
 def R(vc):
     global G
@@ -145,9 +158,9 @@ def R(vc):
     reachable_vertices = dfs_successors(G, key_vc)
     return reachable_vertices
 
-############################################################
-########## M(v(c0), v(c1)) = R(v(c0)) n R (v(c1)) ##########
-############################################################
+##############################################################################
+############ M(v(c0), v(c1)) = R(v(c0)) n R (v(c1)): return Vm  ##############
+##############################################################################
 def M( v1, v2): 
     r1, r2 = dict(), dict()
     r1 = R(v1)
@@ -169,13 +182,12 @@ def M( v1, v2):
             for values2 in r2.values():
                 if value in values2:
                     return value
-                    
                 
     return None
 
-###################################################################
-########## Ps(v(c1), vm ) shortest path from v(c1) to vm ##########
-###################################################################
+##############################################################################
+##########  Ps(v(c1), vm ): return  shortest path from v(c1) to vm ###########
+##############################################################################
 def P(v, vm):
     import networkx as nx
     shortest_path = None
@@ -183,9 +195,9 @@ def P(v, vm):
         shortest_path = nx.shortest_path(G, v, vm)
     return shortest_path
 
-###########################################################################
-########## D(P1, P2) returns the maximum distance for P1 and P2  ##########
-###########################################################################
+##############################################################################
+##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
+##############################################################################
 def D(p1, p2):
     if p1 is None or p2 is None:
         return None
