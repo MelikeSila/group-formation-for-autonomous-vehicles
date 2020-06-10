@@ -152,13 +152,25 @@ def M( v1, v2):
     r1, r2 = dict(), dict()
     r1 = R(v1)
     r2 = R(v2)
-    
+    print(r1.keys())
     for key in r1.keys():
-        for k in r2.keys():
-            if k == key or k == r1[key][0]:
-                return k
-            if r2[k][0] == key or r2[k][0] == r1[key][0]:
-                 return r2[k][0]
+        if key in r2.keys():
+            return key
+        for values in r2.values():
+            if key in values:
+                return key
+    
+    print(r1.values())
+    for values in r1.values():
+        for value in values:
+            if value in r2.keys():
+                print(value)
+                return value
+            for values2 in r2.values():
+                if value in values2:
+                    return value
+                    
+                
     return None
 
 ###################################################################
@@ -175,7 +187,7 @@ def P(v, vm):
 ########## D(P1, P2) returns the maximum distance for P1 and P2  ##########
 ###########################################################################
 def D(p1, p2):
-    if p1 is None or p2 is none:
+    if p1 is None or p2 is None:
         return None
     distance = p1
    
