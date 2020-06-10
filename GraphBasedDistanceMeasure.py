@@ -141,7 +141,9 @@ def V(obstacle):
 from networkx import dfs_successors
 def R(vc):
     global G
-    reachable_vertices = dfs_successors(G, vc)
+    global adj_lanelet_dict
+    key_vc = FindKeyGraphId(vc, adj_lanelet_dict)
+    reachable_vertices = dfs_successors(G, key_vc)
     return reachable_vertices
 
 
@@ -161,3 +163,11 @@ def M( v1, v2):
             if r2[k][0] == key or r2[k][0] == r1[key][0]:
                  return r2[k][0]
     return None
+###################################################################
+########## Ps(v(c1), vm ) shortest path from v(c1) to vm ##########
+###################################################################
+def P(v, vm):
+    import networkx as nx
+    if vm is not None:
+        shortest_path = nx.shortest_path(G, v, vm)
+    return shortest_path
