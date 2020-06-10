@@ -101,10 +101,9 @@ def FindKeyGraphId(search_value, adj_dict):
     return key
 
 
-
-########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ###################
-### the function for finding initial lanelet and its initial vertex of an obstacle and.
-###############################################################################################
+##############################################################################################
+########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ##################
+##############################################################################################
 def V(obstacle):
     import math
     
@@ -136,11 +135,32 @@ def V(obstacle):
     index = (minDistances.index(min(minDistances)))
     return list(key_lanelets)[index], points[index]
 
+################################################################
 ##########  R(v(c)) reachable vertecies by a pbstacle ##########
-###
 ################################################################
 from networkx import dfs_successors
 def R(vc):
     global G
     reachable_vertices = dfs_successors(G, vc)
     return reachable_vertices
+
+
+
+############################################################
+########## M(v(c0), v(c1)) = R(v(c0)) n R (v(c1)) ##########
+############################################################
+def M( v1, v2): 
+    r1, r2 = dict(), dict()
+    r1 = R(v1)
+    r2 = R(v2)
+    common_vertices = []
+
+    for key in r1.keys():
+        for k in r2.keys():
+            if k == key or k == r1[key][0]:
+                common_vertices.append(k)
+            if r2[k][0] == key or r2[k][0] == r1[key][0]:
+                common_vertices.append(r2[k][0])
+
+    common_vertices = list(set(common_vertices)) # make unique the list
+    return common_vertices
