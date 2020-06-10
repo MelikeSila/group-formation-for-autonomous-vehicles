@@ -100,7 +100,6 @@ def FindKeyGraphId(search_value, adj_dict):
 
     return key
 
-
 ##############################################################################################
 ########## Vertex  v(obstacle, graph): return initial_lanelet, initial_node ##################
 ##############################################################################################
@@ -146,8 +145,6 @@ def R(vc):
     reachable_vertices = dfs_successors(G, key_vc)
     return reachable_vertices
 
-
-
 ############################################################
 ########## M(v(c0), v(c1)) = R(v(c0)) n R (v(c1)) ##########
 ############################################################
@@ -163,6 +160,7 @@ def M( v1, v2):
             if r2[k][0] == key or r2[k][0] == r1[key][0]:
                  return r2[k][0]
     return None
+
 ###################################################################
 ########## Ps(v(c1), vm ) shortest path from v(c1) to vm ##########
 ###################################################################
@@ -171,3 +169,12 @@ def P(v, vm):
     if vm is not None:
         shortest_path = nx.shortest_path(G, v, vm)
     return shortest_path
+
+###########################################################################
+########## D(P1, P2) returns the maximum distance for P1 and P2  ##########
+###########################################################################
+def D(p1, p2):
+    distance = p1
+    if len(p1) < len(p2):
+        distance = p2
+    return distance
