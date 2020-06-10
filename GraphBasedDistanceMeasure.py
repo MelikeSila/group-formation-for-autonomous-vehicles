@@ -166,6 +166,7 @@ def M( v1, v2):
 ###################################################################
 def P(v, vm):
     import networkx as nx
+    shortest_path = None
     if vm is not None:
         shortest_path = nx.shortest_path(G, v, vm)
     return shortest_path
@@ -174,7 +175,10 @@ def P(v, vm):
 ########## D(P1, P2) returns the maximum distance for P1 and P2  ##########
 ###########################################################################
 def D(p1, p2):
+    if p1 is None or p2 is none:
+        return None
     distance = p1
+   
     if len(p1) < len(p2):
         distance = p2
     return distance
