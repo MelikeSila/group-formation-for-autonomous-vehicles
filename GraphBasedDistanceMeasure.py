@@ -153,14 +153,11 @@ def M( v1, v2):
     r1, r2 = dict(), dict()
     r1 = R(v1)
     r2 = R(v2)
-    common_vertices = []
-
+    
     for key in r1.keys():
         for k in r2.keys():
             if k == key or k == r1[key][0]:
-                common_vertices.append(k)
+                return k
             if r2[k][0] == key or r2[k][0] == r1[key][0]:
-                common_vertices.append(r2[k][0])
-
-    common_vertices = list(set(common_vertices)) # make unique the list
-    return common_vertices
+                 return r2[k][0]
+    return None
