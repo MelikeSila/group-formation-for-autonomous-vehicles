@@ -198,11 +198,21 @@ def P(v, vm):
 ##############################################################################
 ##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
 ##############################################################################
-def D(p1, p2):
+def D(c1, c2):
+    
+    v1 = V(c1)[0]
+    v2 = V(c2)[0]
+    vm = M(v1, v2)
+
+    #v1, v2, vm
+    p1 = P(v1, vm)
+    p2 = P(v2, vm)
+    
     if p1 is None or p2 is None:
         return None
     distance = p1
    
     if len(p1) < len(p2):
         distance = p2
+    #TODO decide calculate real distance or calculate just lanelet lentgh is enaugh
     return distance
