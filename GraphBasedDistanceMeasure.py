@@ -22,21 +22,21 @@ def CreateEdgeList( p):
 ##  CreateEdgesBtwnLanelets(l, adj_dict): : return edges of lanelet graph L  #
 ##############################################################################
 #return an array that include edges list between given lanelet  and its predessor and successor
-def CreateEdgesBtwnLanelets(l, adj_dict):
+def CreateEdgesBtwnLanelets(l):
     # we can manage previously added edges in here but it can be time waste. 
     #I am Not sure which is more efficient
     # Melike
     #TODO: add adjacency lanelets
     e = []
     a = []
-    key = FindKeyGraphId(l.lanelet_id, adj_dict)
+    key = FindKeyGraphId(l.lanelet_id)
     if l.predecessor:
         for p in l.predecessor:
-            predessor_key = FindKeyGraphId(p, adj_dict)
+            predessor_key = FindKeyGraphId(p)
             e.append([predessor_key, key ])        
     if l.successor:
         for s in l.successor:
-            successor_key = FindKeyGraphId(s,adj_dict)
+            successor_key = FindKeyGraphId(s)
             e.append([key, successor_key])     
     if l.adj_left_same_direction:
         a.append(l.adj_left)
@@ -55,15 +55,14 @@ def CreateLaneletGraph(lanelets):
     #points:  for represent the each point in a lanelet
     #edges:   edges for each lanelet
     #adj_lanelet_dict:  it is for merging adj lanelets and their adj lanelets
-    global adj_lanelet_dict
     global G
-    
+    global adj_lanelet_dict
     for lanelet in lanelets:
         i = lanelet.lanelet_id
         if not adj_lanelet_dict:
             graph_key = i
         else:
-            graph_key = FindKeyGraphId(i, adj_lanelet_dict)
+            graph_key = FindKeyGraphId(i)
         
         # if graph_key == i then we need to create a new lanelet graph else we create "bounded lanelets"
         if graph_key == i: 
@@ -80,7 +79,7 @@ def CreateLaneletGraph(lanelets):
 
             #G add nodes
             # adding the graph of lanelet with id i and adjecent lanelet adj_lanelet
-            edgesLanelet, adjacent_lanelets = CreateEdgesBtwnLanelets(lanelet, adj_lanelet_dict)
+            edgesLanelet, adjacent_lanelets = CreateEdgesBtwnLanelets(lanelet)
             G.add_node(graph_key, adj_lanelet = adjacent_lanelets , graph = L)  
             adj_lanelet_dict[graph_key] = adjacent_lanelets
         else:
@@ -89,14 +88,15 @@ def CreateLaneletGraph(lanelets):
                     adj_lanelet_dict[graph_key] += l
         #G add edges
         G.add_edges_from(edgesLanelet)
-        adj_lanelet_dict = adj_lanelet_dict
     return G
 
 ##############################################################################
 ######  FindKeyGraphId(search_value, adj_dict): return key value for G   #####
 ######  It is necessary for finding "bounded lanelets" graph id          #####
 ##############################################################################
-def FindKeyGraphId(search_value, adj_dict):
+def FindKeyGraphId(search_value):
+    global adj_lanelet_dict
+    adj_dict = adj_lanelet_dict
     values = list(adj_dict.values())
     keys = list(adj_dict.keys())
     key = None
@@ -122,11 +122,10 @@ def V(obstacle):
     points = []
     minDistances = []
     key_lanelets = []
-    global adj_lanelet_dict
     global G
     # selftest =  {53: [], 54: [55], 56: [], 57: [58], 59: [], 60: [61], 62: [], 63: [68], 64: [66], 65: [], 67: []}
     for l in obstacle.initial_center_lanelet_ids:
-        key_lanelets.append(FindKeyGraphId(l,adj_lanelet_dict))
+        key_lanelets.append(FindKeyGraphId(l))
     ## iterate initial lanelets of the obstacle
     # Question: In which situation there can be more than one itinial lanelet for a vehicle
     for l in key_lanelets:
@@ -153,8 +152,7 @@ def V(obstacle):
 from networkx import dfs_successors
 def R(vc):
     global G
-    global adj_lanelet_dict
-    key_vc = FindKeyGraphId(vc, adj_lanelet_dict)
+    key_vc = FindKeyGraphId(vc)
     reachable_vertices = dfs_successors(G, key_vc)
     return reachable_vertices
 
