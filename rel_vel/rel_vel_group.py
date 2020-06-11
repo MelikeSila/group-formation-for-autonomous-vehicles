@@ -12,6 +12,9 @@ def calc_rel_vel_group(state_list):
             sum_rel_vel = sum_rel_vel + rel_vel_vehicle.rel_vel_2_vehicles(state_list[i], state_list[j])
 
     # normalize relative velocity with group size
-    rel_vel_group = sum_rel_vel / (group_size * (group_size - 1))
+    if group_size==1:
+        rel_vel_group=sum_rel_vel
+    else:
+        rel_vel_group = sum_rel_vel / (group_size * (group_size - 1))
 
     return rel_vel_group
