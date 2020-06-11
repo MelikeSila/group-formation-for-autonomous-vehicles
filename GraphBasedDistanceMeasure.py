@@ -123,11 +123,13 @@ def V(obstacle):
     minDistances = []
     key_lanelets = []
     global G
-    # selftest =  {53: [], 54: [55], 56: [], 57: [58], 59: [], 60: [61], 62: [], 63: [68], 64: [66], 65: [], 67: []}
+    
     for l in obstacle.initial_center_lanelet_ids:
         key_lanelets.append(FindKeyGraphId(l))
     ## iterate initial lanelets of the obstacle
     # Question: In which situation there can be more than one itinial lanelet for a vehicle
+    # Answer: the vehicles are examined with its occupancy (length, width and orientation considered)
+    #in this case a vehicle might occupy more than one lanelet
     for l in key_lanelets:
         distances = []
         # iterate all nodes in a lanelet
@@ -154,6 +156,9 @@ def R(vc):
     global G
     key_vc = FindKeyGraphId(vc)
     reachable_vertices = dfs_successors(G, key_vc)
+    if not reachable_vertices:
+        reachable_vertices = {key_vc: []}
+        
     return reachable_vertices
 
 ##############################################################################
@@ -163,7 +168,6 @@ def M( v1, v2):
     r1, r2 = dict(), dict()
     r1 = R(v1)
     r2 = R(v2)
-    print(r1.keys())
     for key in r1.keys():
         if key in r2.keys():
             return key
@@ -171,11 +175,9 @@ def M( v1, v2):
             if key in values:
                 return key
     
-    print(r1.values())
     for values in r1.values():
         for value in values:
             if value in r2.keys():
-                print(value)
                 return value
             for values2 in r2.values():
                 if value in values2:
@@ -198,8 +200,8 @@ def P(v, vm):
 ##############################################################################
 def D(c1, c2):
     
-    v1 = V(c1)[0]
-    v2 = V(c2)[0]
+    v1, n1 = V(c1)
+    v2, n2 = V(c2)
     vm = M(v1, v2)
 
     #v1, v2, vm
@@ -208,9 +210,17 @@ def D(c1, c2):
     
     if p1 is None or p2 is None:
         return None
-    distance = p1
-   
-    if len(p1) < len(p2):
-        distance = p2
+    
+    # measure distance considering nodes of the lanelets
+    distance_p1 = 0
+    distance_p2 = 0
+    for lanelet in p1:
+        distance_p1 = distance_p1 + len(G.nodes[lanelet]['graph'].nodes())
+    for lanelet in p2:
+        distance_p2 = distance_p2 + len(G.nodes[lanelet]['graph'].nodes())
+    distance_p1 = distance_p1 - n1
+    distance_p2 = distance_p2 - n2
+    
+    distance = max(distance_p1, distance_p2)
     #TODO decide calculate real distance or calculate just lanelet lentgh is enaugh
     return distance
