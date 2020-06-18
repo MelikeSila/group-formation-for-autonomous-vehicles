@@ -56,6 +56,7 @@ def CreateLaneletGraph(lanelets):
     #edges:   edges for each lanelet
     #adj_lanelet_dict:  it is for merging adj lanelets and their adj lanelets
     global G
+    Graph_G = nx.DiGraph()
     global adj_lanelet_dict
     for lanelet in lanelets:
         i = lanelet.lanelet_id
@@ -79,15 +80,17 @@ def CreateLaneletGraph(lanelets):
 
             #G add nodes
             # adding the graph of lanelet with id i and adjecent lanelet adj_lanelet
+            distance =  lanelet.distance[-1] #total distance of a lanelet
             edgesLanelet, adjacent_lanelets = CreateEdgesBtwnLanelets(lanelet)
-            G.add_node(graph_key, adj_lanelet = adjacent_lanelets , graph = L)  
+            Graph_G.add_node(graph_key, adj_lanelet = adjacent_lanelets , weight = distance, graph = L)  
             adj_lanelet_dict[graph_key] = adjacent_lanelets
         else:
             for l in adjacent_lanelets:
                 if l not in adj_lanelet_dict[graph_key]:
                     adj_lanelet_dict[graph_key] += l
         #G add edges
-        G.add_edges_from(edgesLanelet)
+        Graph_G.add_edges_from(edgesLanelet)
+        G = Graph_G
     return G
 
 ##############################################################################
@@ -192,7 +195,7 @@ def P(v, vm):
     import networkx as nx
     shortest_path = None
     if vm is not None:
-        shortest_path = nx.shortest_path(G, v, vm)
+        shortest_path = nx.shortest_path(G, source = v, target = vm, weight = 'weight')
     return shortest_path
 
 ##############################################################################
@@ -215,12 +218,16 @@ def D(c1, c2):
     distance_p1 = 0
     distance_p2 = 0
     for lanelet in p1:
-        distance_p1 = distance_p1 + len(G.nodes[lanelet]['graph'].nodes())
+        distance_p1 = distance_p1 + (G.nodes[lanelet]['weight'])
+        last_node_distance1 = (G.nodes[lanelet]['weight'])
     for lanelet in p2:
-        distance_p2 = distance_p2 + len(G.nodes[lanelet]['graph'].nodes())
-    distance_p1 = distance_p1 - n1
-    distance_p2 = distance_p2 - n2
+        distance_p2 = distance_p2 + (G.nodes[lanelet]['weight'])
+        last_node_distance2 = (G.nodes[lanelet]['weight'])
+        
+    #subtrack distances untill vehicles current node
+    distance_p1 = distance_p1 - (G.nodes[v1]['graph'].nodes[n1]['distance']) - last_node_distance1
+    distance_p2 = distance_p2 - (G.nodes[v2]['graph'].nodes[n2]['distance']) - last_node_distance2
     
-    distance = max(distance_p1, distance_p2)
+    distance = max(distance_p1, distance_p2,0)
     #TODO decide calculate real distance or calculate just lanelet lentgh is enaugh
     return distance
