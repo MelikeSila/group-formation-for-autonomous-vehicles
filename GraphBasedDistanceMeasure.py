@@ -85,7 +85,7 @@ def CreateLaneletGraph(lanelets):
         else:
             for l in adjacent_lanelets:
                 if l not in adj_lanelet_dict[graph_key]:
-                    adj_lanelet_dict[graph_key] += l
+                    adj_lanelet_dict[graph_key].append(l)
         #G add edges
         G.add_edges_from(edgesLanelet)
     return G
