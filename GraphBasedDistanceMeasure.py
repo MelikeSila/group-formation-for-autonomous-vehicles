@@ -218,11 +218,13 @@ def D(c1, c2):
     distance_p1 = 0
     distance_p2 = 0
     for lanelet in p1:
-        distance_p1 = distance_p1 + (G.nodes[lanelet]['weight'])
-        last_node_distance1 = (G.nodes[lanelet]['weight'])
+        key_lanelet = FindKeyGraphId(lanelet)
+        distance_p1 = distance_p1 + (G.nodes[key_lanelet]['weight'])
+        last_node_distance1 = (G.nodes[key_lanelet]['weight'])
     for lanelet in p2:
-        distance_p2 = distance_p2 + (G.nodes[lanelet]['weight'])
-        last_node_distance2 = (G.nodes[lanelet]['weight'])
+        key_lanelet = FindKeyGraphId(lanelet)
+        distance_p2 = distance_p2 + (G.nodes[key_lanelet]['weight'])
+        last_node_distance2 = (G.nodes[key_lanelet]['weight'])
         
     #subtrack distances untill vehicles current node
     distance_p1 = distance_p1 - (G.nodes[v1]['graph'].nodes[n1]['distance']) - last_node_distance1
