@@ -202,6 +202,7 @@ def P(v, vm):
 ##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
 ##############################################################################
 def D(c1, c2):
+    import math
     
     v1, n1 = V(c1)
     v2, n2 = V(c2)
@@ -212,7 +213,7 @@ def D(c1, c2):
     p2 = P(v2, vm)
     
     if p1 is None or p2 is None:
-        return None
+        return math.inf
     
     # measure distance considering nodes of the lanelets
     distance_p1 = 0
