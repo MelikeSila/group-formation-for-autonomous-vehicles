@@ -3,11 +3,16 @@
 ##############################################################################
 class ScenarioGraph:
     
-    def __init__(self, scenario):
+    def __init__(self, scenario, planning_problem_set):
         self.scenario = scenario
+        self.planning_problem_set = planning_problem_set
         self.obstacles = scenario.obstacles
         self.lanelets = scenario.lanelet_network.lanelets
         self.adj_lanelet_dict = dict()
+        
+        self.first_ego_vehicle_id = None
+        self.ego_vehicle_ids = list()
+        
         self.scenario_graph = self.CreateLaneletGraph()
     
     
@@ -240,3 +245,35 @@ class ScenarioGraph:
         distance = max(distance_p1, distance_p2,0)
         #TODO decide calculate real distance or calculate just lanelet lentgh is enaugh
         return distance
+    ##############################################################################
+    ###########  GenerateNewEgoVehicleID(): generate a new unique ################
+    ###########  id for ego vehicles in the problem set           ################
+    ##############################################################################
+    def GenerateNewEgoVehicleID(self):
+        #take current ids
+        first_ego_vehicle_id = self.first_ego_vehicle_id
+        ego_vehicle_ids = self.ego_vehicle_ids
+
+        if first_ego_vehicle_id is None:
+            #set first ego vehicle id if it is none and return the id
+            first_ego_vehicle_id = -1
+            #add the new id to list of the ego vehicle ids
+            ego_vehicle_ids.append(first_ego_vehicle_id)
+            #update constructor attributes
+            self.first_ego_vehicle_id = first_ego_vehicle_id
+            self.ego_vehicle_ids = ego_vehicle_ids
+            
+            return first_ego_vehicle_id
+        
+        #find a new unique id
+        new_id = first_ego_vehicle_id
+        while new_id in ego_vehicle_ids:
+            new_id = new_id-1
+        
+        #add the new id to list of the ego vehicle ids
+        ego_vehicle_ids.append(new_id)
+        #update constructor attributes
+        self.first_ego_vehicle_id = first_ego_vehicle_id
+        self.ego_vehicle_ids = ego_vehicle_ids
+        
+        return new_id
