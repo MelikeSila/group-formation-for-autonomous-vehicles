@@ -1,6 +1,6 @@
 import GraphBasedDistanceMeasure
 
-def group_dist(scenario, objects):
+def group_dist(scenario, objects, ScenarioGraph):
 
 
 
@@ -12,7 +12,7 @@ def group_dist(scenario, objects):
     for i in range(0, group_size):
         for j in range(i, group_size):
 
-            sum_dist = sum_dist + GraphBasedDistanceMeasure.D(objects[i], objects[j])
+            sum_dist = sum_dist + ScenarioGraph.D(objects[i], objects[j])
 
     # normalize sum_dist with group size
     if group_size == 1:

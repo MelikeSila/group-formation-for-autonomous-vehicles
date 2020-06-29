@@ -16,8 +16,9 @@ def get_assignments_scores(scenario, planning_problem_set, ideal_group_size, w_s
     #veh_list=list(planning_problem_set.planning_problem_dict.values()) + scenario.dynamic_obstacles
     possible_assignments = all_group_assignments(veh_list)
     assignment_scores =[]
-    lanelets = scenario.lanelet_network.lanelets
-    G = GraphBasedDistanceMeasure.CreateLaneletGraph(lanelets)
+    ScenarioGraph = GraphBasedDistanceMeasure.ScenarioGraph(scenario)
+    G = ScenarioGraph.scenario_graph
+    lanelets = ScenarioGraph.lanelets
 
     for assignments in possible_assignments:
         score=0
@@ -25,7 +26,7 @@ def get_assignments_scores(scenario, planning_problem_set, ideal_group_size, w_s
             #calculate scores for each group within this assignemt
             add_size=group_size_measure.group_size_measure(groups,ideal_group_size)
             add_vel=rel_vel_measure.rel_vel_measure(planning_problem_set, scenario, veh_list)
-            add_dist=GroupDistance.group_dist(scenario, groups)
+            add_dist=GroupDistance.group_dist(scenario, groups, ScenarioGraph)
             # adds up all the scores of the groups in one assignment and weighing them
             score=score+(w_size*add_size)+(w_vel*add_vel)+(w_dist*add_dist)
 
