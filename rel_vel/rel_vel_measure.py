@@ -7,7 +7,7 @@ def rel_vel_measure(planning_problem_set, scenario, group):
     # uses calc_rel_vel_group to get rel_vel
     state_list = []
     
-    # transform ID_list to state_list
+    # get a list of states of the group
     for x in group:
         
         #prob = planning_problem_set.find_planning_problem_by_id(x)
