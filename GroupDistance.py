@@ -3,11 +3,9 @@ import GraphBasedDistanceMeasure
 def group_dist(scenario, objects):
 
 
-
-
     group_size = len(objects)
 
-    # loop sum relative velocities wihtin a group according to Frese, Beyerer, Zimmer
+    # loop sum graph-based distance measure
     sum_dist = 0
     for i in range(0, group_size):
         for j in range(i, group_size):
