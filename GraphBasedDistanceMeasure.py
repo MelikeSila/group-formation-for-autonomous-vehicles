@@ -10,11 +10,13 @@ class ScenarioGraph:
         self.lanelets = scenario.lanelet_network.lanelets
         self.adj_lanelet_dict = dict()
         
+        self.scenario_graph = self._CreateLaneletGraph()
+        
         self.first_ego_vehicle_id = None
         self.ego_vehicle_ids = list()
-        self.ego_vehicle_dic_list = self.__InitializeEgoVehicleAttributes()
-        
-        self.scenario_graph = self._CreateLaneletGraph()
+        self.ego_vehicles_dic = self.__InitializeEgoVehicleAttributes()
+        self.obstacle_ids = list()
+        self.obstacles_dic = self.__InitializeObstacleAttributes()
     
     
     ##############################################################################
@@ -124,14 +126,12 @@ class ScenarioGraph:
             key = search_value
 
         return key
-    ##############################################################################
-    ####################  FUNCTIONS IN THE PAPER  ################################
-    ##############################################################################
 
     ##############################################################################
-    #########  V(obstacle, graph): return initial_lanelet, initial_node ##########
+    #############  __InitializeObstacleLaneletNode(obstacle):        #############
+    #############  return initial_lanelet, initial_node of obstacle  #############
     ##############################################################################
-    def V(self, obstacle):
+    def __InitializeObstacleLaneletNode(self, obstacle):
         import math
 
         points = []
@@ -162,7 +162,82 @@ class ScenarioGraph:
             points.append(distances.index(min(distances)))
         index = (minDistances.index(min(minDistances)))
         return list(key_lanelets)[index], points[index]
+    
+    ##############################################################################
+    #####  __InitializeEgoVehicleAttributes(self):                           #####
+    #####  Initialize ego vehicles attributes;                               #####
+    #####  (id, initial_position, initial_lanelet_id, initial_lanelet_node)  #####
+    ##############################################################################
+    def __InitializeEgoVehicleAttributes(self):
+        from commonroad.scenario.lanelet import LaneletNetwork
 
+        planning_problem_set = self.planning_problem_set
+        ego_vehicles_dic = dict()
+
+        for pp_key in planning_problem_set.planning_problem_dict:
+            
+            ego_vehicle_dic = dict()
+            initial_position = list()
+            #get initial_positions of the ego vehicle
+            pp = planning_problem_set.planning_problem_dict[pp_key]
+            initial_position.append(pp.initial_state.position)
+            ego_vehicle_id = self.__GenerateNewEgoVehicleID()
+            ego_vehicle_lanelet_ids = LaneletNetwork.find_lanelet_by_position( self.scenario.lanelet_network, 
+                                                                              point_list = (initial_position ))[0][0]
+
+            #set the ego vehicle initial state to ego_vehicle_dic
+            ego_vehicle_dic["id"] = ego_vehicle_id
+            ego_vehicle_dic["initial_position"] = initial_position
+            ego_vehicle_dic["initial_lanelet_id"] = ego_vehicle_lanelet_ids
+            ego_vehicle_dic["initial_lanelet_node"] = 0
+            
+            ego_vehicles_dic[ego_vehicle_id] = ego_vehicle_dic
+            
+        self.ego_vehicles_dic = ego_vehicles_dic
+        return ego_vehicles_dic
+    
+    ##############################################################################
+    #####  __InitializeObstacleAttributes(self):                             #####
+    #####  Initialize obstacles  attributes;                                 #####
+    #####  (id, initial_position, initial_lanelet_id, initial_lanelet_node)  #####
+    ##############################################################################
+    def __InitializeObstacleAttributes(self):
+        obstacles = self.obstacles
+        obstacles_dic = dict()
+        obstacle_ids = list()
+        
+        for obstacle in obstacles:
+            
+            obstacle_dic = dict()
+            vertex, node = self.__InitializeObstacleLaneletNode(obstacle)
+            o_id = obstacle.obstacle_id
+            
+            obstacle_dic["id"] = obstacle.obstacle_id
+            obstacle_dic["initial_position"] = obstacle.initial_state.position
+            obstacle_dic["initial_lanelet_id"] = vertex
+            obstacle_dic["initial_lanelet_node"] = node
+            
+            obstacles_dic[o_id] = obstacle_dic
+            obstacle_ids.append(o_id)
+        
+        self.obstacles_dic = obstacles_dic
+        self.obstacle_ids = obstacle_ids
+        return obstacles_dic
+
+    ##########################################################################################################################
+    #############################################  FUNCTIONS IN THE PAPER  ###################################################
+    ##########################################################################################################################
+    
+    ##############################################################################
+    ##############  V(id): return initial lanelet and node########################
+    ##############################################################################
+    def V(self,vehicle_obstacle_id):
+        vehicle_obstacle = {**self.ego_vehicles_dic, **self.obstacles_dic}
+        
+        return vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_id"],vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_node"]
+    
+    
+    
     ##############################################################################
     ############  R(v(c)): return reachable vertecies by an obstacle ############
     ##############################################################################
@@ -278,31 +353,3 @@ class ScenarioGraph:
         self.ego_vehicle_ids = ego_vehicle_ids
         
         return new_id
-    
-    #####  LANELET ID OF EGO VEHICLE  #####
-    #find lanelet id list for ego_vehicles in the problem statements set
-    def __InitializeEgoVehicleAttributes(self):
-        from commonroad.scenario.lanelet import LaneletNetwork
-
-        planning_problem_set = self.planning_problem_set
-        ego_vehicle_dic_list = list()
-        ego_vehicle_dic = dict()
-
-        for pp_key in planning_problem_set.planning_problem_dict:
-            
-            initial_position = list()
-            #get initial_positions of the ego vehicle
-            pp = planning_problem_set.planning_problem_dict[pp_key]
-            initial_position.append(pp.initial_state.position)
-            ego_vehicle_id = self.__GenerateNewEgoVehicleID()
-            ego_vehicle_lanelet_ids = LaneletNetwork.find_lanelet_by_position( self.scenario.lanelet_network, 
-                                                                              point_list = list(initial_position ))
-
-            #set the ego vehicle initial state to ego_vehicle_dic
-            ego_vehicle_dic["id"] = ego_vehicle_id
-            ego_vehicle_dic["initial_position"] = initial_position
-            ego_vehicle_dic["lanelet_id"] = ego_vehicle_lanelet_ids
-            ego_vehicle_dic_list.append(ego_vehicle_dic)
-            
-        self.ego_vehicle_dic_list = ego_vehicle_dic_list
-        return ego_vehicle_dic
