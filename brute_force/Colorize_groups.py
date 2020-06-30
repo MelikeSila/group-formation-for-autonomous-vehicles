@@ -1,5 +1,7 @@
-from commonroad.visualization.plot_helper import redraw_obstacles
+from commonroad.visualization.draw_dispatch_cr import draw_object
 
-def colorize_groups(group_assignment_IDS, scenario):
-    for group in group_assignment_IDS:
-        redraw_obstacles(scenario, handles, figure_handle)
+def colorize_groups(group_assignment):
+    for group in group_assignment:
+        for veh in group:
+
+
