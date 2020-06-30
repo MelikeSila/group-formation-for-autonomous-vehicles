@@ -48,4 +48,4 @@ def get_best_assignment(possible_assignments, assignment_scores):
             grouplist.append(x)
         best_assignment_IDs.append(grouplist)
 
-    return best_assignment_IDs
+    return best_assignment_IDs, best_assignment
