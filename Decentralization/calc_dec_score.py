@@ -23,6 +23,8 @@ def calc_array_for_each_vehicle(scenario, planning_problem_set, ideal_group_size
                 add_dist=GroupDistance.group_dist(scenario, IDs)
                 score=w_vel*add_vel+w_dist*add_dist
             veh_array.append(other_veh: "score")
+        #include group_size
+        
 
         array_list.append(veh_array)
 
