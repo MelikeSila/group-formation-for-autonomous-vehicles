@@ -11,9 +11,8 @@ import GraphBasedDistanceMeasure
 
 #returns two lists: one with all the possible group assignments, the other with the scores of each assignment
 def get_assignments_scores(scenario, planning_problem_set, ideal_group_size, w_size, w_vel, w_dist):
-    veh_list = scenario.dynamic_obstacles
-    #as soon as planning problems work on the distance function use below version
-    #veh_list=list(planning_problem_set.planning_problem_dict.values()) + scenario.dynamic_obstacles
+
+    veh_list=list(planning_problem_set.planning_problem_dict.values()) + scenario.dynamic_obstacles
     possible_assignments = all_group_assignments(veh_list)
     assignment_scores =[]
     ScenarioGraph = GraphBasedDistanceMeasure.ScenarioGraph(scenario, planning_problem_set)
@@ -50,4 +49,4 @@ def get_best_assignment(possible_assignments, assignment_scores):
             grouplist.append(x)
         best_assignment_IDs.append(grouplist)
 
-    return best_assignment_IDs
+    return best_assignment_IDs, best_assignment
