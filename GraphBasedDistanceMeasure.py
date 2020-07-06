@@ -190,6 +190,7 @@ class ScenarioGraph:
             ego_vehicle_dic["initial_position"] = initial_position
             ego_vehicle_dic["initial_lanelet_id"] = ego_vehicle_lanelet_ids
             ego_vehicle_dic["initial_lanelet_node"] = 0
+            ego_vehicle_dic["planning_problem_id"] = pp.planning_problem_id
             
             ego_vehicles_dic[ego_vehicle_id] = ego_vehicle_dic
             
@@ -216,6 +217,7 @@ class ScenarioGraph:
             obstacle_dic["initial_position"] = obstacle.initial_state.position
             obstacle_dic["initial_lanelet_id"] = vertex
             obstacle_dic["initial_lanelet_node"] = node
+            obstacle_dic["planning_problem_id"] = -1
             
             obstacles_dic[o_id] = obstacle_dic
             obstacle_ids.append(o_id)
