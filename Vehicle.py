@@ -35,6 +35,10 @@ class Vehicle:
 
         score_array = None
 
+        add_group_size(score_array, w_group, ideal_size):
+            # sort score_array by size
+            
+
         ########################################################
         return score_array
 
