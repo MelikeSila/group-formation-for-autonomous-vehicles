@@ -5,6 +5,8 @@
 ####       vehicle_obstacle_info: ScenarioGraph.ego_vehicles_dic ||        ###
 ####                              ScenarioGraph.obstacle_dic               ###
 ##############################################################################
+i
+
 class Vehicle:
     
     def __init__(self, vehicle_obstacle_info, vehicle_graph):
@@ -36,8 +38,10 @@ class Vehicle:
         score_array = None
 
         add_group_size(score_array, w_group, ideal_size):
-            # sort score_array by size
-            
+            sorted_score_array{k: v for k, v in sorted(score_array.items(), key=lambda item: item[1])}
+            for i in range(0,len(score_array)):
+                sorted_score_array.values()[i]=sorted_score_array[i]+((i+1-ideal_size)++2)*np.sign(i+1-ideal_size)
+
 
         ########################################################
         return score_array
