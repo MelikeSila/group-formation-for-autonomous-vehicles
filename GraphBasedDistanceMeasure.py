@@ -182,6 +182,7 @@ class ScenarioGraph:
     def __InitializeEgoVehicleAttributes(self):
         
         from commonroad.scenario.lanelet import LaneletNetwork
+        import numpy as numpy
 
         planning_problem_set = self.planning_problem_set
         ego_vehicles_dic = dict()
@@ -199,7 +200,7 @@ class ScenarioGraph:
 
             #set the ego vehicle initial state to ego_vehicle_dic
             ego_vehicle_dic["id"] = ego_vehicle_id
-            ego_vehicle_dic["initial_position"] = initial_position
+            ego_vehicle_dic["initial_position"] = numpy.array(initial_position)[0]
             ego_vehicle_dic["initial_lanelet_id"] = ego_vehicle_lanelet_ids
             ego_vehicle_dic["initial_lanelet_node"] = 0
             ego_vehicle_dic["planning_problem_id"] = pp.planning_problem_id
