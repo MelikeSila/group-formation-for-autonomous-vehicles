@@ -17,7 +17,10 @@ def rel_vel_2_vehicles(is1, is2):
     # we calculate d1 as distance before and distance d2 as distance after one second of movement
 
     d1=math.sqrt((is2.position[0] - is1.position[0]) ** 2 + (is2.position[1] - is1.position[1]) ** 2)
-    
+
+    # calculate second position for both vehicles
+    pos2is1 = [is1.position + [vx1, vy1]]
+    pos2is2=[is2.position+[vx2, vy2]]
     # rel_vel = math.sqrt((vx2 - vx1) ** 2 + (vy2 - vy1) ** 2)
 
     return rel_vel
