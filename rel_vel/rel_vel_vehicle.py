@@ -21,6 +21,11 @@ def rel_vel_2_vehicles(is1, is2):
     # calculate second position for both vehicles
     pos2is1 = [is1.position + [vx1, vy1]]
     pos2is2=[is2.position+[vx2, vy2]]
-    # rel_vel = math.sqrt((vx2 - vx1) ** 2 + (vy2 - vy1) ** 2)
+
+    #calculate d2
+    d1 = math.sqrt((pos2is2[0] - pos2is1[0]) ** 2 + (pos2is2[1] - pos2is1[1]) ** 2)
+
+    #because we look at a step of one second, we can just subtract the positions from each other
+    rel_vel = d2-d1
 
     return rel_vel
