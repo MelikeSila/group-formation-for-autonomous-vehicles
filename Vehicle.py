@@ -14,7 +14,7 @@ class Vehicle:
         self.vehicle_info = vehicle_obstacle_info
         self.vehicle_graph =  vehicle_graph
         
-        # set sensors of vehicle
+        # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
         
         #set arrays of vehicle
