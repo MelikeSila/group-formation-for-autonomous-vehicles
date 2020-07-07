@@ -15,7 +15,7 @@ def get_assignments_scores(scenario, planning_problem_set, ideal_group_size, w_s
     veh_list=list(planning_problem_set.planning_problem_dict.values()) + scenario.dynamic_obstacles
     possible_assignments = all_group_assignments(veh_list)
     assignment_scores =[]
-    ScenarioGraph = ScenarioGraph(scenario, planning_problem_set)
+    ScenarioGraph = GraphBasedDistanceMeasure.ScenarioGraph(scenario, planning_problem_set)
     G = ScenarioGraph.scenario_graph
     lanelets = ScenarioGraph.lanelets
 
