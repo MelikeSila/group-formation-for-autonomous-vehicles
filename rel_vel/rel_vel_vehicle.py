@@ -13,6 +13,9 @@ def rel_vel_2_vehicles(is1, is2):
     vy2 = math.sin(is2.orientation) * is2.velocity
 
     # compute relative velocity
+    # as we want to compute the relative velocity as derivative of the distance between them,
+    # we calculate d1 as distance before and distance d2 as distance after one second of movement
 
-    rel_vel = math.sqrt((vx2 - vx1) ** 2 + (vy2 - vy1) ** 2)
+    # rel_vel = math.sqrt((vx2 - vx1) ** 2 + (vy2 - vy1) ** 2)
+    
     return rel_vel
