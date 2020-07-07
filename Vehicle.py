@@ -7,7 +7,7 @@
 ##############################################################################
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph, sensor_range):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph):
         
         from Sensor import DistanceSensor
         
@@ -15,7 +15,7 @@ class Vehicle:
         self.vehicle_graph =  vehicle_graph
         
         # set sensors of vehicle
-        self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph, sensor_range)
+        self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
         
         #set arrays of vehicle
         self.score_array = self.__ScoreArrayConstructer()

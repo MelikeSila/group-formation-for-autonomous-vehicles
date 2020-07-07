@@ -4,6 +4,7 @@
 class ScenarioGraph:
     
     def __init__(self, scenario, planning_problem_set):
+        
         self.scenario = scenario
         self.planning_problem_set = planning_problem_set
         self.obstacles = scenario.obstacles
@@ -17,18 +18,21 @@ class ScenarioGraph:
         self.ego_vehicles_dic = self.__InitializeEgoVehicleAttributes()
         self.obstacle_ids = list()
         self.obstacles_dic = self.__InitializeObstacleAttributes()
-    
-    
+        
+        self.vehicle_objects_dict = self.__CreateVehcileObjects()
+        
     ##############################################################################
     ########  CreateEdgeList(point_list): return edges of main graph G  ##########
     ##############################################################################
     def __CreateEdgeList(self, p):
+        
         c = []
         prev = None
         for i in p:
             if prev != None:
                 c.append([int(prev),int(i)])
             prev = i
+            
         return c
 
     ##############################################################################
@@ -36,6 +40,7 @@ class ScenarioGraph:
     ##############################################################################
     #return an array that include edges list between given lanelet  and its predessor and successor
     def __CreateEdgesBtwnLanelets(self, l):
+        
         # we can manage previously added edges in here but it can be time waste. 
         #I am Not sure which is more efficient
         # Melike
@@ -55,12 +60,14 @@ class ScenarioGraph:
             a.append(l.adj_left)
         if l.adj_right_same_direction:
             a.append(l.adj_right)
+        
         return e, a
 
     ##############################################################################
     ####  CreateLaneletGraph(lanelets): return a Graph conssit of Lanelets  ######
     ##############################################################################
     def _CreateLaneletGraph(self):
+        
         import networkx as nx
         import numpy as np
         lanelets = self.lanelets
@@ -105,6 +112,7 @@ class ScenarioGraph:
             #G add edges
             Graph_G.add_edges_from(edgesLanelet)
             self.scenario_graph = Graph_G
+            
         return self.scenario_graph
 
     ##############################################################################
@@ -112,6 +120,7 @@ class ScenarioGraph:
     ######  It is necessary for finding "bounded lanelets" graph id          #####
     ##############################################################################
     def __FindKeyGraphId(self, search_value):
+        
         adj_lanelet_dict = self.adj_lanelet_dict
         adj_dict = adj_lanelet_dict
         values = list(adj_dict.values())
@@ -132,6 +141,7 @@ class ScenarioGraph:
     #############  return initial_lanelet, initial_node of obstacle  #############
     ##############################################################################
     def __InitializeObstacleLaneletNode(self, obstacle):
+        
         import math
 
         points = []
@@ -161,6 +171,7 @@ class ScenarioGraph:
             minDistances.append(min(distances))
             points.append(distances.index(min(distances)))
         index = (minDistances.index(min(minDistances)))
+        
         return list(key_lanelets)[index], points[index]
     
     ##############################################################################
@@ -169,6 +180,7 @@ class ScenarioGraph:
     #####  (id, initial_position, initial_lanelet_id, initial_lanelet_node)  #####
     ##############################################################################
     def __InitializeEgoVehicleAttributes(self):
+        
         from commonroad.scenario.lanelet import LaneletNetwork
 
         planning_problem_set = self.planning_problem_set
@@ -195,6 +207,7 @@ class ScenarioGraph:
             ego_vehicles_dic[ego_vehicle_id] = ego_vehicle_dic
             
         self.ego_vehicles_dic = ego_vehicles_dic
+        
         return ego_vehicles_dic
     
     ##############################################################################
@@ -203,6 +216,7 @@ class ScenarioGraph:
     #####  (id, initial_position, initial_lanelet_id, initial_lanelet_node)  #####
     ##############################################################################
     def __InitializeObstacleAttributes(self):
+        
         obstacles = self.obstacles
         obstacles_dic = dict()
         obstacle_ids = list()
@@ -224,8 +238,24 @@ class ScenarioGraph:
         
         self.obstacles_dic = obstacles_dic
         self.obstacle_ids = obstacle_ids
+        
         return obstacles_dic
 
+    ##############################################################################
+    #####  __CreateVehcileObjects(self):                                     #####
+    #####  Initialize Vehicle objects from Vehicle class                     #####
+    ##############################################################################
+    def __CreateVehcileObjects(self):
+        
+        from Vehicle import Vehicle
+        vehicle_objects_dict = dict()
+        cars = { **self.ego_vehicles_dic, **self.obstacles_dic}
+        
+        for car_id in cars:
+            vehicle_objects_dict[car_id] = Vehicle(cars[car_id], self)
+            
+        return vehicle_objects_dict
+    
     ##########################################################################################################################
     #############################################  FUNCTIONS IN THE PAPER  ###################################################
     ##########################################################################################################################
@@ -234,6 +264,7 @@ class ScenarioGraph:
     ##############  V(id): return initial lanelet and node########################
     ##############################################################################
     def V(self,vehicle_obstacle_id):
+        
         vehicle_obstacle = {**self.ego_vehicles_dic, **self.obstacles_dic}
         
         return vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_id"],vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_node"]
@@ -244,6 +275,7 @@ class ScenarioGraph:
     ############  R(v(c)): return reachable vertecies by an obstacle ############
     ##############################################################################
     def R(self, vc):
+        
         from networkx import dfs_successors
         G = self.scenario_graph
         key_vc = self.__FindKeyGraphId(vc)
@@ -257,6 +289,7 @@ class ScenarioGraph:
     ############ M(v(c0), v(c1)) = R(v(c0)) n R (v(c1)): return Vm  ##############
     ##############################################################################
     def M(self, v1, v2): 
+        
         r1, r2 = dict(), dict()
         r1 = self.R(v1)
         r2 = self.R(v2)
@@ -281,16 +314,19 @@ class ScenarioGraph:
     ##########  Ps(v(c1), vm ): return  shortest path from v(c1) to vm ###########
     ##############################################################################
     def P(self, v, vm):
+        
         import networkx as nx
         shortest_path = None
         if vm is not None:
             shortest_path = nx.shortest_path(self.scenario_graph, source = v, target = vm, weight = 'weight')
+        
         return shortest_path
 
     ##############################################################################
     ##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
     ##############################################################################
     def D(self, c1, c2):
+        
         import math
         G = self.scenario_graph
         v1, n1 = self.V(c1)
@@ -321,13 +357,14 @@ class ScenarioGraph:
         distance_p2 = distance_p2 - (G.nodes[v2]['graph'].nodes[n2]['distance']) - last_node_distance2
 
         distance = max(distance_p1, distance_p2,0)
-        #TODO decide calculate real distance or calculate just lanelet lentgh is enaugh
+        
         return distance
     ##############################################################################
     ###########  GenerateNewEgoVehicleID(): generate a new unique ################
     ###########  id for ego vehicles in the problem set           ################
     ##############################################################################
     def __GenerateNewEgoVehicleID(self):
+        
         #take current ids
         first_ego_vehicle_id = self.first_ego_vehicle_id
         ego_vehicle_ids = self.ego_vehicle_ids

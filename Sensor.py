@@ -7,9 +7,9 @@
 ##############################################################################
 class DistanceSensor:
     
-    def __init__(self, vehicle_info, vehicle_graph, sensor_range):
+    def __init__(self, vehicle_info, vehicle_graph):
         
-        self.sensor_range = sensor_range
+        self.sensor_range = 0.1
         self.vehicle_graph = vehicle_graph
         self.vehicle_info = vehicle_info
         
