@@ -5,7 +5,7 @@
 ####       vehicle_obstacle_info: ScenarioGraph.ego_vehicles_dic ||        ###
 ####                              ScenarioGraph.obstacle_dic               ###
 ##############################################################################
-i
+import numpy as np
 
 class Vehicle:
     
