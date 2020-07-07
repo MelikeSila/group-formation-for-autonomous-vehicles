@@ -37,11 +37,11 @@ class Vehicle:
 
         score_array = None
 
-        add_group_size(score_array, w_group, ideal_size):
+        add_group_size(score_array, w_size, ideal_size):
             sorted_score_array{k: v for k, v in sorted(score_array.items(), key=lambda item: item[1])}
             for i in range(0,len(score_array)):
-                sorted_score_array.values()[i]=sorted_score_array[i]+((i+1-ideal_size)++2)*np.sign(i+1-ideal_size)
-
+                sorted_score_array.values()[i]=sorted_score_array[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
+            return sorted_score_array
 
         ########################################################
         return score_array
