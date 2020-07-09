@@ -6,6 +6,7 @@
 ####                              ScenarioGraph.obstacle_dic               ###
 ##############################################################################
 import numpy as np
+import commonroad.planning.planning_problem as planning_problem
 
 class Vehicle:
     
@@ -40,9 +41,11 @@ class Vehicle:
         for vehicle in vehicle_objects:
             if vehicle_objects[vehicle].vehicle_info.id>o:
                 ID=vehicle_objects[vehicle].vehicle_info.id
+                state=
             else if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0
                 ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
-
+                state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
+            
 
 
         def add_group_size(score_array, w_size, ideal_size):
