@@ -7,6 +7,8 @@
 ##############################################################################
 import numpy as np
 import commonroad.planning.planning_problem as planning_problem
+import GraphBasedDistanceMeasure
+import rel_vel
 
 class Vehicle:
     
@@ -16,6 +18,12 @@ class Vehicle:
         
         self.vehicle_info = vehicle_obstacle_info
         self.vehicle_graph =  vehicle_graph
+
+        #own ID regardless whether its planningProblem or obstacle
+        if self.vehicle_info.id>0:
+            self.ownID=self.vehicle_info.id
+        else:
+            self.ownID=self.vehicle_info.planning_problem_id
         
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
@@ -46,7 +54,10 @@ class Vehicle:
                 ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
                 state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
             if ID in self.distance_sensor.vehicles_in_range:
-                
+                add_dist=w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
+                add_vel=w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
+
+
 
 
         def add_group_size(score_array, w_size, ideal_size):
@@ -66,6 +77,7 @@ class Vehicle:
         ########################################################
         ## TODO: calcuşate the group array of the vehicle
         ########################################################
+
 
         group_array = None
 
