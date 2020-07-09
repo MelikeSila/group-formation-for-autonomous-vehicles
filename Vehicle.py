@@ -45,7 +45,8 @@ class Vehicle:
             else if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0
                 ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
                 state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
-            
+            if ID in self.distance_sensor.vehicles_in_range:
+                
 
 
         def add_group_size(score_array, w_size, ideal_size):
