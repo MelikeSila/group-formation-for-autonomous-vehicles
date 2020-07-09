@@ -12,7 +12,7 @@ import rel_vel
 
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph, w_vel, w_dist, w_size, ideal_size):
         
         from Sensor import DistanceSensor
         
@@ -27,6 +27,12 @@ class Vehicle:
         
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
+
+        #weights and ideal groupsizes
+        self.w_vel=w_vel
+        self.w_dist=w_dist
+        self.w_size=w_size
+        self.ideal_size=ideal_size
         
         #set arrays of vehicle
         self.score_dict = self.__ScoreDictConstructer()
@@ -45,6 +51,11 @@ class Vehicle:
         ########################################################
         vehicle_objects = SG.vehicle_objects_dict
 
+        def add_group_size(score_dict, w_size, ideal_size):
+            sorted_score_dict{k: v for k, v in sorted(score_dict.items(), key=lambda item: item[1])}
+            for i in range(0,len(score_array)):
+                sorted_score_dict.values()[i]=sorted_score_dict[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
+            return sorted_score_dict
 
         for vehicle in vehicle_objects:
             if vehicle_objects[vehicle].vehicle_info.id>o:
@@ -59,14 +70,12 @@ class Vehicle:
                 score=add_vel+add_dist
                 score_dict.update(ID:'score')
 
+        score_dict=add_group_size(score_dict, w_size, ideal_size)
 
 
 
-        def add_group_size(score_array, w_size, ideal_size):
-            sorted_score_array{k: v for k, v in sorted(score_array.items(), key=lambda item: item[1])}
-            for i in range(0,len(score_array)):
-                sorted_score_array.values()[i]=sorted_score_array[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
-            return sorted_score_array
+
+
 
         ########################################################
         return score_array
