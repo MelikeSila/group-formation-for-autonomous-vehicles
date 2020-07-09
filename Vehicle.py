@@ -12,7 +12,7 @@ import rel_vel
 
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph, w_vel, w_dist, w_size, ideal_size):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph, w_vel, w_dist, w_size, ideal_size, scorelimit):
         
         from Sensor import DistanceSensor
         
@@ -33,6 +33,7 @@ class Vehicle:
         self.w_dist=w_dist
         self.w_size=w_size
         self.ideal_size=ideal_size
+        self.scorelimit=scorelimit
         
         #set arrays of vehicle
         self.score_dict = self.__ScoreDictConstructer()
@@ -44,11 +45,7 @@ class Vehicle:
     def __ScoreDictConstructer(self):
 
         score_dict = {}
-        distance_sensor = self.distance_sensor
 
-        ########################################################
-        ## TODO: calculate the score array of the given vehiclee
-        ########################################################
         vehicle_objects = SG.vehicle_objects_dict
 
         #reads in score_dict (with missing group size features) and adds group size features
@@ -58,24 +55,26 @@ class Vehicle:
                 sorted_score_dict.values()[i]=sorted_score_dict[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
             return sorted_score_dict
 
-        #
+        #iterates through vehicle list and calculates scores for the vehicles in range
         for vehicle in vehicle_objects:
+
+            #gets state and ID of the vehicle for the distance and velocity functions
             if vehicle_objects[vehicle].vehicle_info.id>o:
                 ID=vehicle_objects[vehicle].vehicle_info.id
                 state=
             else if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0
                 ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
                 state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
+
+            #uses state and ID to calculate score
             if ID in self.distance_sensor.vehicles_in_range:
                 add_dist=self.w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
                 add_vel=self.w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
                 score=add_vel+add_dist
                 score_dict.update(ID:'score')
 
+        #adds group size score
         score_dict=add_group_size(score_dict, self.w_size, self.ideal_size)
-
-
-
 
 
 
@@ -91,10 +90,17 @@ class Vehicle:
         ## TODO: calcuşate the group array of the vehicle
         ########################################################
 
+        for veh in score_dict:
+            if veh.value>self.scorelimit:
+                if veh.handle_group_request ==1
+                    group_array.append(veh.key)
 
-        group_array = None
+
+
 
         ########################################################
 
 
-        return group_array            
+        return group_array
+
+    def handle_group_request(self, ID):
