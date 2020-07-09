@@ -29,15 +29,15 @@ class Vehicle:
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
         
         #set arrays of vehicle
-        self.score_array = self.__ScoreArrayConstructer()
+        self.score_dict = self.__ScoreDictConstructer()
         self.group_array = self.__GroupArrayConstructer()
         
         #knowledge base
         self.knowledge_base = None
         
-    def __ScoreArrayConstructer(self):
+    def __ScoreDictConstructer(self):
 
-        score_array = []
+        score_dict = {}
         distance_sensor = self.distance_sensor
 
         ########################################################
@@ -56,6 +56,8 @@ class Vehicle:
             if ID in self.distance_sensor.vehicles_in_range:
                 add_dist=w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
                 add_vel=w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
+                score=add_vel+add_dist
+                score_dict.update(ID:'score')
 
 
 
