@@ -65,12 +65,12 @@ class Vehicle:
                 ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
                 state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
             if ID in self.distance_sensor.vehicles_in_range:
-                add_dist=w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
-                add_vel=w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
+                add_dist=self.w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
+                add_vel=self.w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
                 score=add_vel+add_dist
                 score_dict.update(ID:'score')
 
-        score_dict=add_group_size(score_dict, w_size, ideal_size)
+        score_dict=add_group_size(score_dict, self.w_size, self.ideal_size)
 
 
 
@@ -78,7 +78,7 @@ class Vehicle:
 
 
         ########################################################
-        return score_array
+        return score_dict
 
     def __GroupArrayConstructer(self):
 
