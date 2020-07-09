@@ -38,7 +38,10 @@ class Vehicle:
 
 
         for vehicle in vehicle_objects:
-            
+            if vehicle_objects[vehicle].vehicle_info.id>o:
+                ID=vehicle_objects[vehicle].vehicle_info.id
+            else if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0
+                ID=vehicle_objects[vehicle].vehicle_info.planning_problem_id
 
 
 
