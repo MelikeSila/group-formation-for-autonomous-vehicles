@@ -34,10 +34,15 @@ class Vehicle:
         ########################################################
         ## TODO: calculate the score array of the given vehiclee
         ########################################################
+        vehicle_objects = SG.vehicle_objects_dict
 
-        score_array = None
 
-        add_group_size(score_array, w_size, ideal_size):
+        for vehicle in vehicle_objects:
+            
+
+
+
+        def add_group_size(score_array, w_size, ideal_size):
             sorted_score_array{k: v for k, v in sorted(score_array.items(), key=lambda item: item[1])}
             for i in range(0,len(score_array)):
                 sorted_score_array.values()[i]=sorted_score_array[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
