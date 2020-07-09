@@ -51,12 +51,14 @@ class Vehicle:
         ########################################################
         vehicle_objects = SG.vehicle_objects_dict
 
+        #reads in score_dict (with missing group size features) and adds group size features
         def add_group_size(score_dict, w_size, ideal_size):
             sorted_score_dict{k: v for k, v in sorted(score_dict.items(), key=lambda item: item[1])}
             for i in range(0,len(score_array)):
                 sorted_score_dict.values()[i]=sorted_score_dict[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
             return sorted_score_dict
 
+        #
         for vehicle in vehicle_objects:
             if vehicle_objects[vehicle].vehicle_info.id>o:
                 ID=vehicle_objects[vehicle].vehicle_info.id
