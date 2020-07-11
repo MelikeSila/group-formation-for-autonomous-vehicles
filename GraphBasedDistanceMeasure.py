@@ -201,6 +201,7 @@ class ScenarioGraph:
             #set the ego vehicle initial state to ego_vehicle_dic
             ego_vehicle_dic["id"] = ego_vehicle_id
             ego_vehicle_dic["initial_position"] = numpy.array(initial_position)[0]
+            ego_vehicle_dic["initial_state"] = pp.initial_state
             ego_vehicle_dic["initial_lanelet_id"] = ego_vehicle_lanelet_ids
             ego_vehicle_dic["initial_lanelet_node"] = 0
             ego_vehicle_dic["planning_problem_id"] = pp.planning_problem_id
@@ -230,6 +231,7 @@ class ScenarioGraph:
             
             obstacle_dic["id"] = obstacle.obstacle_id
             obstacle_dic["initial_position"] = obstacle.initial_state.position
+            obstacle_dic["initial_state"] = obstacle.initial_state
             obstacle_dic["initial_lanelet_id"] = vertex
             obstacle_dic["initial_lanelet_node"] = node
             obstacle_dic["planning_problem_id"] = -1
