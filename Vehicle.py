@@ -12,6 +12,7 @@ class Vehicle:
         from Sensor import DistanceSensor
         
         self.vehicle_info = vehicle_obstacle_info
+        self.vehicle_initial_state = vehicle_obstacle_info["initial_state"]
         self.vehicle_graph =  vehicle_graph
         
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
