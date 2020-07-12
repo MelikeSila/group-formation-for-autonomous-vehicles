@@ -1,7 +1,13 @@
 import commonroad.planning.planning_problem as planning_problem
+import commonroad.planning as planning
 def conv_to_IDs(scenario, planningProblemSet, veh_list):
     #reads in an object list and returns and ID_list
     ID_list=[]
+    for veh in veh_list:
+        if isinstance(veh, planning.planning_problem.PlanningProblem):
+            ID_list.append(veh.planning_problem_id)
+        else:
+            ID_list.append(veh.obstacle_id)
     return ID_list
 
 
