@@ -34,8 +34,9 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        self.score_dict = {}
-        self.group_array = None
+        # If we call the functions here there will be missing information for initial vehicles which sed by Graph.
+        self.score_dict = [] #ScoreDictConstructor(vehicle_graph.vehicle_objects_dict, vehicle_graph)
+        self.group_array = None #GroupArrayConstructer()
         
         #knowledge base
         self.knowledge_base = None
@@ -85,7 +86,7 @@ class Vehicle:
         distance_sensor = self.distance_sensor
 
         ########################################################
-        ## TODO: calcuşate the group array of the vehicle
+        ## TODO: calculate the group array of the vehicle
         ########################################################
 
         for veh in score_dict:
