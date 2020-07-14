@@ -59,12 +59,12 @@ class Vehicle:
         for vehicle in vehicle_objects:
 
             #gets state and ID of the vehicle for the distance and velocity functions
-            if vehicle_objects[vehicle].vehicle_info.["id"]>o:
-                ID=vehicle_objects[vehicle].vehicle_info.["id"]
+            if vehicle_objects[vehicle].vehicle_info["id"]>o:
+                ID=vehicle_objects[vehicle].vehicle_info["id"]
                 state=vehicle_objects[vehicle].vehicle_initial_state
             else:
                 if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0:
-                    ID=vehicle_objects[vehicle].vehicle_info.["planning_problem_id"]
+                    ID=vehicle_objects[vehicle].vehicle_info["planning_problem_id"]
                     state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
 
             #uses state and ID to calculate score
