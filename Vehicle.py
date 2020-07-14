@@ -35,7 +35,7 @@ class Vehicle:
         
         #set arrays of vehicle
         self.score_dict = {}
-        self.group_array = None
+        self.group_array = []
         
         #knowledge base
         self.knowledge_base = None
@@ -79,18 +79,12 @@ class Vehicle:
         ########################################################
         return score_dict
 
-    def GroupArrayConstructor(self):
+    def GroupArrayConstructor(self, vehicle_objects_dict):
 
-        group_array = []
-        distance_sensor = self.distance_sensor
 
-        ########################################################
-        ## TODO: calcuşate the group array of the vehicle
-        ########################################################
-
-        for veh in score_dict:
-            if veh.value>self.scorelimit:
-                if (veh.value.handle_group_request(self.vehicle_info["id"])==1):
+        for key, value in self.score_dict.items():
+            if value>self.scorelimit:
+                if (vehicle_objects_dict[key].handle_group_request(self.vehicle_info["id"])==1):
                     self.group_array.append(veh.vehicle_info["id"])
 
 
