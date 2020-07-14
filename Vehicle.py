@@ -43,7 +43,7 @@ class Vehicle:
         #knowledge base
         self.knowledge_base = None
         
-    def ScoreDictConstructor(self, vehicle_objects_dict):
+    def ScoreDictConstructor(self, vehicle_objects_dict, scenario_graph):
 
         score_dict = {}
 
@@ -65,11 +65,11 @@ class Vehicle:
             else:
                 if vehicle.vehicle_info["planning_problem_id"]>0:
                     ID=vehicle.vehicle_info["planning_problem_id"]
-                    state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
+                    state=vehicle.vehicle_initial_state
 
             #uses state and ID to calculate score
             if ID in self.distance_sensor.vehicles_in_range:
-                add_dist=self.w_dist*GraphBasedDistanceMeasure.D(ID, self.ownID)
+                add_dist=self.w_dist*scenario_graph.D(ID, self.ownID)
                 add_vel=self.w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
                 score=add_vel+add_dist
                 score_dict.update({ID: score})
