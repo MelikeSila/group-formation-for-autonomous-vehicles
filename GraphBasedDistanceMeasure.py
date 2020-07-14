@@ -269,7 +269,7 @@ class ScenarioGraph:
     ##############################################################################
     def V(self,vehicle_obstacle_id):
         
-        vehicle_obstacle = {**self.ego_vehicles_dic, **self.obstacles_dic}
+        vehicle_obstacle = self.all_cars_dict
         
         return vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_id"],vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_node"]
     
@@ -330,9 +330,8 @@ class ScenarioGraph:
     ##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
     ##############################################################################
     def D(self, c1, c2):
-        
-        assert c1 is None or c2 is None, "Id cannot be Null!"
-        assert c1 not in self.vehicle_objects_dict or c2 not in self.vehicle_objects_dict, "One of the given ids is not defined in the Graph!"
+        assert c1 is not None and c2 is not None, "Id cannot be Null!"
+        assert c1 not in self.all_cars_dict or c2 not in self.all_cars_dict, "One of the given ids is not defined in the Graph!"
         
         import math
         G = self.scenario_graph
