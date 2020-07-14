@@ -10,6 +10,7 @@ import commonroad.planning.planning_problem as planning_problem
 import GraphBasedDistanceMeasure
 import rel_vel
 import numpy as np
+from rel_vel import rel_vel_vehicle
 
 class Vehicle:
     
@@ -65,7 +66,7 @@ class Vehicle:
             #uses state and ID to calculate score
             if ID in self.distance_sensor.vehicles_in_range:
                 add_dist=self.w_dist*scenario_graph.D(ID, self.vehicle_info["id"])
-                #add_vel=self.w_vel*rel_vel.rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
+                add_vel=self.w_vel*rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
                 add_vel=0
                 score=add_vel+add_dist
                 score_dict.update({ID: score})
