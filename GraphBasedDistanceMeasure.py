@@ -331,7 +331,7 @@ class ScenarioGraph:
     ##############################################################################
     def D(self, c1, c2):
         assert c1 is not None and c2 is not None, "Id cannot be Null!"
-        assert c1 not in self.all_cars_dict or c2 not in self.all_cars_dict, "One of the given ids is not defined in the Graph!"
+        assert c1 in self.all_cars_dict and c2 in self.all_cars_dict, "One of the given ids is not defined in the Graph!"
         
         import math
         G = self.scenario_graph
