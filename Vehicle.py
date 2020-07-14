@@ -43,11 +43,11 @@ class Vehicle:
         #knowledge base
         self.knowledge_base = None
         
-    def ScoreDictConstructor(self, vehicle_objects):
+    def ScoreDictConstructor(self, vehicle_objects_dict):
 
         score_dict = {}
 
-
+        vehicle_objects=list(vehicle_objects_dict.values())
         #reads in score_dict (with missing group size features) and adds group size features
         def add_group_size(score_dict, w_size, ideal_size):
             sorted_score_dict = {k: v for k, v in sorted(score_dict.items(), key=lambda item: item[1])}
@@ -59,12 +59,12 @@ class Vehicle:
         for vehicle in vehicle_objects:
 
             #gets state and ID of the vehicle for the distance and velocity functions
-            if vehicle_objects[vehicle].vehicle_info["id"]>o:
-                ID=vehicle_objects[vehicle].vehicle_info["id"]
-                state=vehicle_objects[vehicle].vehicle_initial_state
+            if vehicle.vehicle_info["id"]>0:
+                ID=vehicle.vehicle_info["id"]
+                state=vehicle.vehicle_initial_state
             else:
-                if vehicle_objects[vehicle].vehicle_info.planning_problem_id>0:
-                    ID=vehicle_objects[vehicle].vehicle_info["planning_problem_id"]
+                if vehicle.vehicle_info["planning_problem_id"]>0:
+                    ID=vehicle.vehicle_info["planning_problem_id"]
                     state=planning_problem.PlanningProblemSet.find_planning_problem_by_id(PlanningProblemSet, ID)
 
             #uses state and ID to calculate score
