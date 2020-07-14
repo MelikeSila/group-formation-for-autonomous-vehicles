@@ -12,7 +12,7 @@ import rel_vel
 
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph, w_vel, w_dist, w_size, ideal_size, scorelimit):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph=1, w_vel=1, w_dist=1, w_size=1, ideal_size=1, scorelimit=1):
         
         from Sensor import DistanceSensor
         
@@ -20,11 +20,11 @@ class Vehicle:
         self.vehicle_initial_state = vehicle_obstacle_info["initial_state"]
         self.vehicle_graph =  vehicle_graph
 
-        #own ID regardless whether its planningProblem or obstacle
-        if self.vehicle_info.id>0:
-            self.ownID=self.vehicle_info.id
+        #own ID regardless whether it's planningProblem or obstacle
+        if self.vehicle_info["id"]>0:
+            self.ownID=self.vehicle_info["id"]
         else:
-            self.ownID=self.vehicle_info.planning_problem_id
+            self.ownID=self.vehicle_info["planning_problem_id"]
         
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
@@ -37,18 +37,17 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        self.score_dict = None
+        self.score_dict = []
         self.group_array = None
         
         #knowledge base
         self.knowledge_base = None
         
-    def ScoreDictConstructer(self):
+    def ScoreDictConstructor(self, vehicle_objects):
 
         score_dict = {}
 
-        vehicle_objects = SG.vehicle_objects_dict
-
+        
         #reads in score_dict (with missing group size features) and adds group size features
         def add_group_size(score_dict, w_size, ideal_size):
             sorted_score_dict = {k: v for k, v in sorted(score_dict.items(), key=lambda item: item[1])}
@@ -83,7 +82,7 @@ class Vehicle:
         ########################################################
         return score_dict
 
-    def __GroupArrayConstructer(self):
+    def GroupArrayConstructer(self):
 
         group_array = []
         distance_sensor = self.distance_sensor
@@ -106,3 +105,4 @@ class Vehicle:
         return group_array
 
     def handle_group_request(self, ID):
+        pass
