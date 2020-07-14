@@ -79,7 +79,7 @@ class Vehicle:
         ########################################################
         return score_dict
 
-    def GroupArrayConstructer(self):
+    def GroupArrayConstructor(self):
 
         group_array = []
         distance_sensor = self.distance_sensor
@@ -90,8 +90,8 @@ class Vehicle:
 
         for veh in score_dict:
             if veh.value>self.scorelimit:
-                if (veh.handle_group_request==1):
-                    group_array.append(veh.key)
+                if (veh.value.handle_group_request(self.vehicle_info["id"])==1):
+                    self.group_array.append(veh.vehicle_info["id"])
 
 
 
@@ -102,4 +102,8 @@ class Vehicle:
         return group_array
 
     def handle_group_request(self, ID):
-        pass
+        if self.score_dict[ID]>self.scorelimit:
+            self.group_array.append(ID)
+            return 1
+        else:
+            return 0
