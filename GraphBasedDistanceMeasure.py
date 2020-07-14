@@ -18,6 +18,7 @@ class ScenarioGraph:
         self.ego_vehicles_dic = self.__InitializeEgoVehicleAttributes()
         self.obstacle_ids = list()
         self.obstacles_dic = self.__InitializeObstacleAttributes()
+        self.all_cars_dict = cars = { **self.ego_vehicles_dic, **self.obstacles_dic}
         
         self.vehicle_objects_dict = self.__CreateVehcileObjects()
         
