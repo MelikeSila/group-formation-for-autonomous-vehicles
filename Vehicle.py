@@ -34,7 +34,7 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        self.score_dict = []
+        self.score_dict = {}
         self.group_array = None
         
         #knowledge base
