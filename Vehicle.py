@@ -9,6 +9,8 @@ import numpy as np
 import commonroad.planning.planning_problem as planning_problem
 import GraphBasedDistanceMeasure
 import rel_vel
+import numpy as np
+from rel_vel import rel_vel_vehicle
 
 class Vehicle:
     
@@ -20,12 +22,7 @@ class Vehicle:
         self.vehicle_initial_state = vehicle_obstacle_info["initial_state"]
         self.vehicle_graph =  vehicle_graph
 
-        #own ID regardless whether it's planningProblem or obstacle
-        if self.vehicle_info["id"]>0:
-            self.ownID=self.vehicle_info["id"]
-        else:
-            self.ownID=self.vehicle_info["planning_problem_id"]
-        
+
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
         self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
 
@@ -37,7 +34,7 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        self.score_dict = []
+        self.score_dict = {}
         self.group_array = None
         
         #knowledge base
@@ -51,26 +48,26 @@ class Vehicle:
         #reads in score_dict (with missing group size features) and adds group size features
         def add_group_size(score_dict, w_size, ideal_size):
             sorted_score_dict = {k: v for k, v in sorted(score_dict.items(), key=lambda item: item[1])}
-            for i in range(0,len(score_array)):
-                sorted_score_dict.values()[i]=sorted_score_dict[i]+w_size(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
+            i=0
+            for k, v in sorted_score_dict.items():
+                v=sorted_score_dict[k]
+                sorted_score_dict[k]=v+w_size*(((i+1-ideal_size)++2)*np.sign(i+1-ideal_size))
+
             return sorted_score_dict
 
         #iterates through vehicle list and calculates scores for the vehicles in range
         for vehicle in vehicle_objects:
 
             #gets state and ID of the vehicle for the distance and velocity functions
-            if vehicle.vehicle_info["id"]>0:
-                ID=vehicle.vehicle_info["id"]
-                state=vehicle.vehicle_initial_state
-            else:
-                if vehicle.vehicle_info["planning_problem_id"]>0:
-                    ID=vehicle.vehicle_info["planning_problem_id"]
-                    state=vehicle.vehicle_initial_state
+
+            ID=vehicle.vehicle_info["id"]
+            state=vehicle.vehicle_initial_state
 
             #uses state and ID to calculate score
             if ID in self.distance_sensor.vehicles_in_range:
-                add_dist=self.w_dist*scenario_graph.D(ID, self.ownID)
-                add_vel=self.w_vel*rel_vel.rel_vel_vehicle(state, self.vehicle_info.state)
+                add_dist=self.w_dist*scenario_graph.D(ID, self.vehicle_info["id"])
+                add_vel=self.w_vel*rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
+                add_vel=0
                 score=add_vel+add_dist
                 score_dict.update({ID: score})
 
