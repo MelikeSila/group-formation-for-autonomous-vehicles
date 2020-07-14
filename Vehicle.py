@@ -85,7 +85,8 @@ class Vehicle:
         for key, value in self.score_dict.items():
             if value>self.scorelimit:
                 if (vehicle_objects_dict[key].handle_group_request(self.vehicle_info["id"])==1):
-                    self.group_array.append(veh.vehicle_info["id"])
+                    if key not in self.group_array:
+                        self.group_array.append(key)
 
 
 
@@ -93,11 +94,12 @@ class Vehicle:
         ########################################################
 
 
-        return group_array
+
 
     def handle_group_request(self, ID):
         if self.score_dict[ID]>self.scorelimit:
-            self.group_array.append(ID)
+            if ID not in self.group_array:
+                self.group_array.append(ID)
             return 1
         else:
             return 0
