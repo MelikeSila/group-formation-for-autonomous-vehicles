@@ -34,9 +34,8 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        # If we call the functions here there will be missing information for initial vehicles which sed by Graph.
-        self.score_dict = [] #ScoreDictConstructor(vehicle_graph.vehicle_objects_dict, vehicle_graph)
-        self.group_array = None #GroupArrayConstructer()
+        self.score_dict = {}
+        self.group_array = []
         
         #knowledge base
         self.knowledge_base = None
@@ -80,27 +79,27 @@ class Vehicle:
         ########################################################
         return score_dict
 
-    def GroupArrayConstructer(self):
+    def GroupArrayConstructor(self, vehicle_objects_dict):
 
-        group_array = []
-        distance_sensor = self.distance_sensor
 
-        ########################################################
-        ## TODO: calculate the group array of the vehicle
-        ########################################################
+        for key, value in self.score_dict.items():
+            if value>self.scorelimit:
 
-        for veh in score_dict:
-            if veh.value>self.scorelimit:
-                if (veh.handle_group_request==1):
-                    group_array.append(veh.key)
-
+                if (vehicle_objects_dict[key].handle_group_request(self.vehicle_info["id"])==1):
+                    if key not in self.group_array:
+                        self.group_array.append(key)
 
 
 
         ########################################################
 
 
-        return group_array
+
 
     def handle_group_request(self, ID):
-        pass
+        if self.score_dict[ID]>self.scorelimit:
+            if ID not in self.group_array:
+                self.group_array.append(ID)
+            return 1
+        else:
+            return 0
