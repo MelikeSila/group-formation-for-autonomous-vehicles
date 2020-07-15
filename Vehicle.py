@@ -40,9 +40,10 @@ class Vehicle:
         #knowledge base
         self.knowledge_base = None
         
-    def ScoreDictConstructor(self, vehicle_objects_dict, scenario_graph):
+    def _ScoreDictConstructor(self, vehicle_objects_dict):
 
         score_dict = {}
+        scenario_graph = self.vehicle_graph
 
         vehicle_objects=list(vehicle_objects_dict.values())
         #reads in score_dict (with missing group size features) and adds group size features
@@ -79,7 +80,7 @@ class Vehicle:
         ########################################################
         return score_dict
 
-    def GroupArrayConstructor(self, vehicle_objects_dict):
+    def _GroupArrayConstructor(self, vehicle_objects_dict):
 
 
         for key, value in self.score_dict.items():

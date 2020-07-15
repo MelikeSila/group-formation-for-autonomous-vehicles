@@ -258,6 +258,12 @@ class ScenarioGraph:
         for car_id in cars:
             vehicle_objects_dict[car_id] = Vehicle(cars[car_id], self)
             
+        for vehicle in vehicle_objects_dict.values():
+            vehicle.score_dict=vehicle._ScoreDictConstructor(vehicle_objects_dict)
+    
+        for vehicle in vehicle_objects_dict.values():
+            vehicle._GroupArrayConstructor(vehicle_objects_dict)
+        
         return vehicle_objects_dict
     
     ##########################################################################################################################
