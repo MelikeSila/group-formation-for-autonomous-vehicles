@@ -36,11 +36,12 @@ class DistanceSensor:
             
             if vehicle_id != current_vehicle_id:
                 
-                x0 = vehicle_dict[vehicle_id]["initial_position"][0]
-                y0 = vehicle_dict[vehicle_id]["initial_position"][1]
-                x1 = vehicle["initial_position"][0]
-                y1 = vehicle["initial_position"][1]
-                distance = math.sqrt((x0 - x1)**2 + (y0 - y1)**2)            
+                #x0 = vehicle_dict[vehicle_id]["initial_position"][0]
+                #y0 = vehicle_dict[vehicle_id]["initial_position"][1]
+                #x1 = vehicle["initial_position"][0]
+                #y1 = vehicle["initial_position"][1]
+                #distance = math.sqrt((x0 - x1)**2 + (y0 - y1)**2)
+                distance = vehicle_graph.D(vehicle_dict[vehicle_id], vehicle)
                 
                 if distance < self.sensor_range:
                     vehicles_in_range_array.append(vehicle_id)
