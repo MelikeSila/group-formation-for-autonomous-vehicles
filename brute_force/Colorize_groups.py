@@ -5,7 +5,7 @@ from matplotlib.collections import PatchCollection
 
 
 def colorize_groups(group_assignment, axes, time, group_ids):
-    colors = ['#f5fc00', '#00fcfb', '#56c933', '#035aff', '#fc4a00','#123456', '#c400fc', '#fca500', '#00fca3', '#71fff1', '#aebbff', '#C2185B', '#00796B', '#998822', '#880000', '#008800', '#000088', '#994499', '#990022', '#000000']
+    colors = ['#f5fc00', '#00fcfb', '#56c933', '#035aff', '#fc4a00','#123456', '#c400fc', '#fca500', '#00fca3', '#71fff1', '#aebbff', '#C2185B', '#00796B', '#998822', '#880000', '#008800', '#000088', '#994499', '#990022', '#000000', '#f5fc00', '#00fcfb', '#56c933', '#035aff', '#fc4a00','#123456', '#c400fc', '#fca500', '#00fca3', '#71fff1', '#aebbff', '#C2185B', '#00796B', '#998822', '#880000', '#008800', '#000088', '#994499', '#990022', '#000000']
     i = 0
     patch = []
     for group in group_assignment:

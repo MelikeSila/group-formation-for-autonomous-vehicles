@@ -41,7 +41,7 @@ class DistanceSensor:
                 #x1 = vehicle["initial_position"][0]
                 #y1 = vehicle["initial_position"][1]
                 #distance = math.sqrt((x0 - x1)**2 + (y0 - y1)**2)
-                distance = vehicle_graph.D(vehicle_dict[vehicle_id], vehicle)
+                distance = vehicle_graph.D(vehicle_id, current_vehicle_id )
                 
                 if distance < self.sensor_range:
                     vehicles_in_range_array.append(vehicle_id)
