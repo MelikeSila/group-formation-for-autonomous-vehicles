@@ -12,9 +12,11 @@ class VisualizationFunctions:
         self.first_group_id = None
         self.unique_group_ids = list()
         
+        group_arrays_len_dict = self.__CalculateLengthOfGroupArrays()
         self.vehicle_id_group_id = dict()
         self.group_id_vehicle_ids = dict()
-        self.__SetGroupIds()
+        self.discovered_vehicles = []
+        self.__NewSetGroupIds()
         
     #######################################################################################################################
     #######################################################################################################################
@@ -25,98 +27,119 @@ class VisualizationFunctions:
     ########      Collect the group arrays of vehicle                   ########## 
     ########      from __CollectGroupArrayConstructers in Vehicle class ##########
     ##############################################################################
-    def __IsTheCarWillingToCooperate(self, examined_vehicle_id, current_vehicle_id, discovered_vehicles):
+    def __CalculateLengthOfGroupArrays(self):
         
+        group_arrays_len_dict = dict()
         vehicle_objects = self.scenario_graph.vehicle_objects_dict
         
-        examined_vehicle_group_array = vehicle_objects[examined_vehicle_id].group_array
-        if examined_vehicle_id not in discovered_vehicles and current_vehicle_id in examined_vehicle_group_array:
-            return True
-        else:
-            return False
+        for vehicle_id in vehicle_objects:
+            group_array_len = len(vehicle_objects[vehicle_id].group_array)
+            group_arrays_len_dict[vehicle_id] = group_array_len
+
+        self.group_arrays_len_dict = group_arrays_len_dict
+        
+        return group_arrays_len_dict
     ##############################################################################
+    def __IsTheExaminedVehicleFitWithAllOtherVehicles(self, examined_vehicle ,willing_ordered_group_array):
+        
+        isFit = True
+        vehicle_objects = self.scenario_graph.vehicle_objects_dict
+        
+        #check the vehicle in the all group arrays of vehicles in the group array of current_vehicle
+        for vehicle_id in willing_ordered_group_array:
+            if examined_vehicle not in vehicle_objects[vehicle_id].group_array and vehicle_id != examined_vehicle:
+                isFit = False
+                return False
+                
+            
+        return isFit
     ##############################################################################
+    def __RemoveTheGroupedVehicles(self, ordered_group_aray):
+        
+        vehicles_willing_to_make_a_group = ordered_group_aray
+        discovered_vehicles = self.discovered_vehicles
+        
+        #remove the vehicles has already has a group id
+        for vehicle_id in ordered_group_aray:
+            if vehicle_id in discovered_vehicles:
+                vehicle_index = vehicles_willing_to_make_a_group.index(vehicle_id)
+                vehicles_willing_to_make_a_group.pop(vehicle_index)
+        
+        return vehicles_willing_to_make_a_group
     ##############################################################################
-    def __PutTheVehiclesInSameGroup(self, current_vehicle_id, examined_vehicle_id):
-        #TODO
+    def __OrderVehicles(self, group_array):
+        
+        import operator
+        
+        #(ascending) order the vehicles according to size of vehicles in theier group_array
+        ordered_group_array = []
+        
+        group_arrays_len_dict = self.group_arrays_len_dict
+        temp_ordered_group_array = dict(sorted(group_arrays_len_dict.items(), key=operator.itemgetter(1))).keys()
+        
+        for vehicle_id in temp_ordered_group_array:
+            if vehicle_id in group_array:
+                ordered_group_array.append(vehicle_id)
+        
+        return ordered_group_array
+    
+    ##############################################################################
+    def __GetFitVehicles(self, group_array):
+        fit_vehicles = []
+        discovered_vehicles = self.discovered_vehicles
+        
+        #order the vehicles according to size of vehicle in their goup array
+        ordered_group_aray = self.__OrderVehicles(group_array)
+        #remove the vehicles has already grouped
+        willing_ordered_group_array = self.__RemoveTheGroupedVehicles(ordered_group_aray)
+        
+        #get the vehicles fit with each of the vehicles in the group_array of current_vehicle
+        for examined_vehicle in willing_ordered_group_array:
+            isFit = self.__IsTheExaminedVehicleFitWithAllOtherVehicles(examined_vehicle ,willing_ordered_group_array)
+            if isFit:
+                fit_vehicles.append(examined_vehicle)
+                discovered_vehicles.append(examined_vehicle)
+                
+        self.discovered_vehicles = discovered_vehicles
+        return fit_vehicles
+    ##############################################################################
+    def __SetTheVehiclesGroupsDicts(self, current_vehicle_id, fit_vehicles_for_group):
         vehicle_id_group_id = self.vehicle_id_group_id
         group_id_vehicle_ids = self.group_id_vehicle_ids
+        group_id = self.__GroupUniqueIDGenerator()
         
-        #if current_vehicle_id has a group id
-        if current_vehicle_id in vehicle_id_group_id.keys() and examined_vehicle_id not in vehicle_id_group_id.keys():
-            #if current_vehicle_id exist and examined_vehicle_id not exist
-            group_id = vehicle_id_group_id[current_vehicle_id]
-            group_id_vehicle_ids[group_id].append(examined_vehicle_id)
-            vehicle_id_group_id[ examined_vehicle_id ] = group_id
+        group_id_vehicle_ids[group_id] = fit_vehicles_for_group
         
-        #if examined_vehicle_id has a group id
-        elif examined_vehicle_id in vehicle_id_group_id.keys() and current_vehicle_id not in vehicle_id_group_id.keys():
-            #if examined_vehicle_id exist and current_vehicle_id not exist
-            group_id = vehicle_id_group_id[examined_vehicle_id]
-            group_id_vehicle_ids[group_id].append(current_vehicle_id)
-            vehicle_id_group_id[ current_vehicle_id ] = group_id
-            
-        #if both of them don't have a group id
-        elif examined_vehicle_id not in vehicle_id_group_id.keys() and current_vehicle_id not in vehicle_id_group_id.keys():
-            #create a new id
-            group_id = self.__GroupUniqueIDGenerator()
-            group_id_vehicle_ids[group_id] = [examined_vehicle_id]
-            group_id_vehicle_ids[group_id].append(current_vehicle_id)
-            vehicle_id_group_id[current_vehicle_id] = group_id
-            vehicle_id_group_id[examined_vehicle_id] = group_id
-        #if they are not agree on the group id put the current_vehicle into a group if it doesn't have a group
-        elif current_vehicle_id not in vehicle_id_group_id.keys():
-            #if the vehicle cannot cooperate any car put the vehicle into a new group
-            #put the vehicle into new group
-            group_id = self.__GroupUniqueIDGenerator()
-            group_id_vehicle_ids[group_id] = [ current_vehicle_id ]
-            vehicle_id_group_id[current_vehicle_id] = group_id
-            
+        for vehicle_id in fit_vehicles_for_group:
+            vehicle_id_group_id[vehicle_id] = group_id
+        
+        
         self.vehicle_id_group_id = vehicle_id_group_id
         self.group_id_vehicle_ids = group_id_vehicle_ids
-    
     ##############################################################################
-    ##############################################################################
-    ##############################################################################   
-    #def __CheckTheWillingVehiclesInGroupArrayHasGroup(self, current_vehicle_id, group_array, discovered_vehicles ):
-        
-     #   willing_vehicles_group_array = []
-        
-      #  for veh in group_array:
-       #     if self.__IsTheCarWillingToCooperate(veh, current_vehicle_id, discovered_vehicles) :
-        #        willing_vehicles_group_array.append(veh)
-        
-       # possible_groups = set(willing_vehicles_group_array).intersection(discovered_vehicles)
-        
-        #return possible_groups
-        
-    ##############################################################################
-    ##############################################################################
-    ##############################################################################    
-    def __SetGroupIds(self):
+    def __NewSetGroupIds(self):
         
         vehicle_objects = self.scenario_graph.vehicle_objects_dict
-        discovered_vehicles = []
+        discovered_vehicles = self.discovered_vehicles
+        grouped_vehicles = []
         
+        #TODO
+        #vehicle_objects[current_vehicle_id].group_array --> am I need to order it
         for current_vehicle_id in vehicle_objects:
-            
-            discovered_vehicles.append(current_vehicle_id)
-            group_array = vehicle_objects[current_vehicle_id].group_array
-            
-            #get the group ids of vehicle if the any vehicle in the group_array is assigned to a group
-            #possible_groups = self.__CheckTheWillingVehiclesInGroupArrayHasGroup(current_vehicle_id, group_array, discovered_vehicles)
-            
-            #check the vehicles is want to make a gruop with current vehicle
-            for examined_vehicle_id in group_array:
+            if current_vehicle_id not in discovered_vehicles:
                 
-                isWilling = self.__IsTheCarWillingToCooperate(examined_vehicle_id, current_vehicle_id, discovered_vehicles)
-                #check the examined_vehicle_id and current_vehicle_id in the same group
-                if isWilling:
-                    #they are willing to cooperate put them same group if they aggreed on group id
-                    #otherwise put the current vehicle into a new group if it doesn't have a group
-                    self.__PutTheVehiclesInSameGroup(current_vehicle_id, examined_vehicle_id)
+                group_array = vehicle_objects[current_vehicle_id].group_array
+                #get the vehicles which fit with all vehicles in the group array
+                fit_vehicles_for_group = self.__GetFitVehicles(group_array)
+                
+                if len(fit_vehicles_for_group) != 0:
+                    grouped_vehicles.append(fit_vehicles_for_group)
+                    self.__SetTheVehiclesGroupsDicts(current_vehicle_id, fit_vehicles_for_group)
+                #put the current vehicle into discovered_vehicle if it has a group_id
+                if current_vehicle_id in self.vehicle_id_group_id.keys():
+                    discovered_vehicles.append(current_vehicle_id)
             
-    
+        self.discovered_vehicles = discovered_vehicles
     
     ##############################################################################
     ###########  __GroupUniqueIDGenerator(): generate a new unique################
