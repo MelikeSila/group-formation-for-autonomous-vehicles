@@ -14,11 +14,17 @@ class ScenarioGraph:
         self.scenario_graph = self._CreateLaneletGraph()
         
         self.first_ego_vehicle_id = None
+        
         self.ego_vehicle_ids = list()
+        self.ego_vehicles_current_state_dic = dict()
         self.ego_vehicles_dic = self.__InitializeEgoVehicleAttributes()
+        
         self.obstacle_ids = list()
+        self.obstacles_current_state_dic = dict() #TODO
         self.obstacles_dic = self.__InitializeObstacleAttributes()
+        
         self.all_cars_dict = cars = { **self.ego_vehicles_dic, **self.obstacles_dic}
+        self.all_cars_current_state_dict = cars = { **self.ego_vehicles_current_state_dic, **self.obstacles_current_state_dic}
         
         self.vehicle_objects_dict = self.__CreateVehcileObjects()
         
@@ -223,6 +229,7 @@ class ScenarioGraph:
         obstacles = self.obstacles
         obstacles_dic = dict()
         obstacle_ids = list()
+        obstacles_current_state_dic = self.obstacles_current_state_dic
         
         for obstacle in obstacles:
             
@@ -239,9 +246,33 @@ class ScenarioGraph:
             
             obstacles_dic[o_id] = obstacle_dic
             obstacle_ids.append(o_id)
-        
+            
+            #####################################################################
+            #####################################################################
+            #set the obstacles_current_state_dic
+            from commonroad.scenario.lanelet import LaneletNetwork
+            
+            time = 0
+            prev_lanelet = -1
+            scenario = self.scenario
+            current_state_dic = dict()
+            while obstacle.occupancy_at_time(time):
+                current_position = obstacle.occupancy_at_time(time).shape.center
+                current_lanelet = LaneletNetwork.find_lanelet_by_position( scenario.lanelet_network,
+                                                                           point_list = [current_position])[0][0]
+                if prev_lanelet != current_lanelet:
+                    #setting the current state dict with key lanelet
+                    current_state_dic[time] = self.__FindKeyGraphId(current_lanelet)
+                    prev_lanelet = current_lanelet
+                time = time + 1
+            obstacles_current_state_dic[obstacle.obstacle_id] = current_state_dic
+            #####################################################################
+            #####################################################################
+            
         self.obstacles_dic = obstacles_dic
         self.obstacle_ids = obstacle_ids
+        
+        self.obstacles_current_state_dic = obstacles_current_state_dic
         
         return obstacles_dic
 
@@ -343,7 +374,7 @@ class ScenarioGraph:
         G = self.scenario_graph
         v1, n1 = self.V(c1)
         v2, n2 = self.V(c2)
-        vm = self.M(v1, v2)
+        vm = self.M(v1, v2)  #TODO calculation of M may be easier
 
         #v1, v2, vm
         p1 = self.P(v1, vm)
