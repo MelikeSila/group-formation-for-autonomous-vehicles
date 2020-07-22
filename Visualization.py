@@ -16,11 +16,14 @@ class VisualizationFunctions:
         self.vehicle_id_group_id = dict()
         self.group_id_vehicle_ids = dict()
         self.discovered_vehicles = []
-        self.__NewSetGroupIds()
+        self.__SetGroupIds()
+        
+        group_id_vehicle_ids_in_time_step = dict()
+        #vehicle_id_group_id_in_time_step = dict() #we do not need it
         
     #######################################################################################################################
     #######################################################################################################################
-    ###########################            Group Array          ###########################################################
+    ###########################            Group Array for One Group           ############################################
     #######################################################################################################################
     ##############################################################################
     ########  __CollectGroupArrayConstructers():                        ##########
@@ -117,7 +120,7 @@ class VisualizationFunctions:
         self.vehicle_id_group_id = vehicle_id_group_id
         self.group_id_vehicle_ids = group_id_vehicle_ids
     ##############################################################################
-    def __NewSetGroupIds(self):
+    def __SetGroupIds(self):
         
         vehicle_objects = self.scenario_graph.vehicle_objects_dict
         discovered_vehicles = self.discovered_vehicles
@@ -178,3 +181,12 @@ class VisualizationFunctions:
     ##########################################################################################################################
     ##########################################################################################################################
     ##########################################################################################################################
+    # shape of group_id_vehicle_ids_in_time_step
+    #{time: {group_id: [group1], group_id: [group2]}}
+    def GetGroupsInTimeStep:
+        group_id_vehicle_ids_in_time_step = self.group_id_vehicle_ids_in_time_step
+        #TODO give scenario to __SetGroupIds in time steps
+        
+        
+        self.group_id_vehicle_ids_in_time_step = group_id_vehicle_ids_in_time_step
+        
