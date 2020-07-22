@@ -104,3 +104,13 @@ class Vehicle:
             return 1
         else:
             return 0
+
+
+    def GroupArraysInTimeSteps(self):
+        #TODO calculate all group arrays for each of the vehicles in each time steps
+        SG_1.obstacles_dic[35]["current_state_dic"]
+        
+        
+        
+        
+        

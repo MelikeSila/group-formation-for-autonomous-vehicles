@@ -28,6 +28,7 @@ class ScenarioGraph:
         
         self.vehicle_objects_dict = self.__CreateVehcileObjects()
         
+        self.current_time = 0
     ##############################################################################
     ########  CreateEdgeList(point_list): return edges of main graph G  ##########
     ##############################################################################
@@ -307,9 +308,23 @@ class ScenarioGraph:
     ##############################################################################
     def V(self,vehicle_obstacle_id):
         
+        current_time = self.current_time
+        
         vehicle_obstacle = self.all_cars_dict
         
-        return vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_id"],vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_node"]
+        if vehicle_obstacle_id < 0:#remove after ego_vehicle    
+            #remove after ego_vehicle    
+            current_lanelet = vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_id"]
+        else: #remove after ego_vehicle    
+            current_lanelet = vehicle_obstacle[vehicle_obstacle_id]["current_state_dic"][current_time]
+        
+        #current node
+        if current_time == 0 or vehicle_obstacle_id < 0: #remove after ego_vehicle remove just vehicle_obstacle_id < 0
+            current_node = vehicle_obstacle[vehicle_obstacle_id]["initial_lanelet_node"]
+        else:
+            current_node = 0
+            
+        return  current_lanelet ,current_node
     
     
     
@@ -367,9 +382,11 @@ class ScenarioGraph:
     ##############################################################################
     ##########  D(P1, P2): returns the maximum distance for P1 and P2  ###########
     ##############################################################################
-    def D(self, c1, c2):
+    def D(self, c1, c2, time = 0):
         assert c1 is not None and c2 is not None, "Id cannot be Null!"
         assert c1 in self.all_cars_dict and c2 in self.all_cars_dict, "One of the given ids is not defined in the Graph!"
+        
+        self.current_time = time
         
         import math
         G = self.scenario_graph
