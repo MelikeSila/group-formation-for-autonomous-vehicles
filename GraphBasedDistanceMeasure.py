@@ -23,8 +23,8 @@ class ScenarioGraph:
         self.obstacles_current_state_dic = dict() #TODO
         self.obstacles_dic = self.__InitializeObstacleAttributes()
         
-        self.all_cars_dict = cars = { **self.ego_vehicles_dic, **self.obstacles_dic}
-        self.all_cars_current_state_dict = cars = { **self.ego_vehicles_current_state_dic, **self.obstacles_current_state_dic}
+        self.all_cars_dict = { **self.ego_vehicles_dic, **self.obstacles_dic}
+        self.all_cars_current_state_dict = { **self.ego_vehicles_current_state_dic, **self.obstacles_current_state_dic}
         
         self.vehicle_objects_dict = self.__CreateVehcileObjects()
         
@@ -212,6 +212,7 @@ class ScenarioGraph:
             ego_vehicle_dic["initial_lanelet_id"] = ego_vehicle_lanelet_ids
             ego_vehicle_dic["initial_lanelet_node"] = 0
             ego_vehicle_dic["planning_problem_id"] = pp.planning_problem_id
+            #TODO ego_vehicle_dic["current_state_dic"]
             
             ego_vehicles_dic[ego_vehicle_id] = ego_vehicle_dic
             
@@ -235,17 +236,7 @@ class ScenarioGraph:
             
             obstacle_dic = dict()
             vertex, node = self.__InitializeObstacleLaneletNode(obstacle)
-            o_id = obstacle.obstacle_id
-            
-            obstacle_dic["id"] = obstacle.obstacle_id
-            obstacle_dic["initial_position"] = obstacle.initial_state.position
-            obstacle_dic["initial_state"] = obstacle.initial_state
-            obstacle_dic["initial_lanelet_id"] = vertex
-            obstacle_dic["initial_lanelet_node"] = node
-            obstacle_dic["planning_problem_id"] = -1
-            
-            obstacles_dic[o_id] = obstacle_dic
-            obstacle_ids.append(o_id)
+            o_id = obstacle.obstacle_id            
             
             #####################################################################
             #####################################################################
@@ -265,9 +256,19 @@ class ScenarioGraph:
                     current_state_dic[time] = self.__FindKeyGraphId(current_lanelet)
                     prev_lanelet = current_lanelet
                 time = time + 1
-            obstacles_current_state_dic[obstacle.obstacle_id] = current_state_dic
+            obstacles_current_state_dic[o_id] = current_state_dic
             #####################################################################
             #####################################################################
+            
+            obstacle_dic["id"] = obstacle.obstacle_id
+            obstacle_dic["initial_position"] = obstacle.initial_state.position
+            obstacle_dic["initial_state"] = obstacle.initial_state
+            obstacle_dic["initial_lanelet_id"] = vertex
+            obstacle_dic["initial_lanelet_node"] = node
+            obstacle_dic["planning_problem_id"] = -1
+            obstacle_dic["current_state_dic"] = current_state_dic
+            obstacles_dic[o_id] = obstacle_dic
+            obstacle_ids.append(o_id)
             
         self.obstacles_dic = obstacles_dic
         self.obstacle_ids = obstacle_ids
@@ -284,7 +285,7 @@ class ScenarioGraph:
         
         from Vehicle import Vehicle
         vehicle_objects_dict = dict()
-        cars = { **self.ego_vehicles_dic, **self.obstacles_dic}
+        cars = self.all_cars_dict
         
         for car_id in cars:
             vehicle_objects_dict[car_id] = Vehicle(cars[car_id], self)
