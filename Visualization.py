@@ -38,10 +38,11 @@ class VisualizationFunctions:
         vehicle_objects = self.scenario_graph.vehicle_objects_dict
         
         for vehicle_id in vehicle_objects:
-            group_array_len = len(vehicle_objects[vehicle_id].group_array[current_time])
-            
-            group_arrays_len_dict_current_time[vehicle_id] = group_array_len
-            group_arrays_len_dict[current_time] = group_arrays_len_dict_current_time
+            if current_time in vehicle_objects[vehicle_id].group_array:
+                group_array_len = len(vehicle_objects[vehicle_id].group_array[current_time])
+
+                group_arrays_len_dict_current_time[vehicle_id] = group_array_len
+                group_arrays_len_dict[current_time] = group_arrays_len_dict_current_time
 
         self.group_arrays_len_dict = group_arrays_len_dict
         
@@ -126,10 +127,11 @@ class VisualizationFunctions:
             group_id_vehicle_ids[current_time][group_id] = fit_vehicles_for_group
             
         for vehicle_id in fit_vehicles_for_group:
-            current_time_vehicle_id_group_id = dict()
-            current_time_vehicle_id_group_id[vehicle_id] = group_id
-            vehicle_id_group_id[current_time] = [current_time_vehicle_id_group_id[vehicle_id]]
-        
+            if current_time not in vehicle_id_group_id:
+                vehicle_id_group_id[current_time] = {}
+                vehicle_id_group_id[current_time][vehicle_id] = group_id
+            else: 
+                vehicle_id_group_id[current_time][vehicle_id] = group_id        
         
         self.vehicle_id_group_id = vehicle_id_group_id
         self.group_id_vehicle_ids = group_id_vehicle_ids
@@ -144,14 +146,15 @@ class VisualizationFunctions:
         #vehicle_objects[current_vehicle_id].group_array --> am I need to order it
         for current_vehicle_id in vehicle_objects:
             if current_time not in discovered_vehicles or current_vehicle_id not in discovered_vehicles[current_time]:
-                current_time_group_array = vehicle_objects[current_vehicle_id].group_array[current_time]
-                #get the vehicles which fit with all vehicles in the group array
-                fit_vehicles_for_group = self.__GetFitVehicles(current_time_group_array, current_time)
-                
-                if len(fit_vehicles_for_group) != 0:
-                    grouped_vehicles.append(fit_vehicles_for_group)
-                    self.__SetTheVehiclesGroupsDicts(current_vehicle_id, fit_vehicles_for_group, current_time)
-                #put the current vehicle into discovered_vehicle if it has a group_id
+                if current_time in vehicle_objects[current_vehicle_id].group_array:
+                    current_time_group_array = vehicle_objects[current_vehicle_id].group_array[current_time]
+                    #get the vehicles which fit with all vehicles in the group array
+                    fit_vehicles_for_group = self.__GetFitVehicles(current_time_group_array, current_time)
+
+                    if len(fit_vehicles_for_group) != 0:
+                        grouped_vehicles.append(fit_vehicles_for_group)
+                        self.__SetTheVehiclesGroupsDicts(current_vehicle_id, fit_vehicles_for_group, current_time)
+                    #put the current vehicle into discovered_vehicle if it has a group_id
                 if current_time in self.vehicle_id_group_id and current_vehicle_id in self.vehicle_id_group_id[current_time]:
                     discovered_vehicles[current_time].append(current_vehicle_id)
             
@@ -209,7 +212,7 @@ class VisualizationFunctions:
         group_id_vehicle_ids_in_time_step = self.group_id_vehicle_ids_in_time_step
         #TODO give scenario to __SetGroupIds in time steps
         
-        for current_time in range (0,16): #TOFO define the dynamic currnet_time
+        for current_time in range (0,50): #TOFO define the dynamic currnet_time
             self.__CalculateLengthOfGroupArrays(current_time) # 1
             self.__SetGroupIds(current_time)
             group_id_vehicle_ids_in_time_step[current_time] = self.group_id_vehicle_ids[current_time]
