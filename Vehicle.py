@@ -24,7 +24,7 @@ class Vehicle:
 
 
         # distance_sensor is an Sensor object which include the id of the vehicles in range of the given vehicle sensor
-        self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph)
+        self.distance_sensor = DistanceSensor(self.vehicle_info, vehicle_graph,0)
 
         #weights and ideal groupsizes
         self.w_vel=w_vel
@@ -34,13 +34,13 @@ class Vehicle:
         self.scorelimit=scorelimit
         
         #set arrays of vehicle
-        self.score_dict = {}
-        self.group_array = []
+        self.score_dict = dict()
+        self.group_array = dict()
         
         #knowledge base
         self.knowledge_base = None
         
-    def _ScoreDictConstructor(self, vehicle_objects_dict):
+    def _ScoreDictConstructor(self, vehicle_objects_dict, current_time):
 
         score_dict = {}
         scenario_graph = self.vehicle_graph
@@ -65,30 +65,40 @@ class Vehicle:
             state=vehicle.vehicle_initial_state
 
             #uses state and ID to calculate score
+            self.distance_sensor.current_time = current_time
             if ID in self.distance_sensor.vehicles_in_range:
-                add_dist=self.w_dist*scenario_graph.D(ID, self.vehicle_info["id"])
+                add_dist=self.w_dist*scenario_graph.D(ID, self.vehicle_info["id"], current_time)
                 add_vel=self.w_vel*rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
                 add_vel=0
                 score=add_vel+add_dist
-                score_dict.update({ID: score})
+                
+                if current_time not in score_dict:
+                    score_dict[current_time] = {ID: score}
+                else:
+                    score_dict[current_time].update({ID: score})
 
         #adds group size score
-        score_dict=add_group_size(score_dict, self.w_size, self.ideal_size)
+        
+        if current_time in score_dict:
+            score_dict[current_time] = add_group_size(score_dict[current_time], self.w_size, self.ideal_size)
+        else:
+            score_dict[current_time] = {}
 
 
 
         ########################################################
-        return score_dict
+        return score_dict[current_time]
 
-    def _GroupArrayConstructor(self, vehicle_objects_dict):
+    def _GroupArrayConstructor(self, vehicle_objects_dict, current_time):
 
-
-        for key, value in self.score_dict.items():
+        for key, value in self.score_dict[current_time].items():
             if value>self.scorelimit:
 
-                if (vehicle_objects_dict[key].handle_group_request(self.vehicle_info["id"])==1):
-                    if key not in self.group_array:
-                        self.group_array.append(key)
+                if (vehicle_objects_dict[key].handle_group_request(self.vehicle_info["id"], current_time)==1):
+                    if current_time in self.group_array and key not in self.group_array[current_time]:
+                        self.group_array[current_time].append(key)
+                    else:
+                        self.group_array[current_time] = [key]
 
 
 
@@ -97,20 +107,13 @@ class Vehicle:
 
 
 
-    def handle_group_request(self, ID):
-        if self.score_dict[ID]>self.scorelimit:
-            if ID not in self.group_array:
-                self.group_array.append(ID)
-            return 1
+    def handle_group_request(self, ID, current_time):
+        if current_time in self.score_dict:
+            if self.score_dict[current_time][ID]>self.scorelimit:
+                if current_time in self.group_array.keys() and ID not in self.group_array[current_time]:
+                    self.group_array[current_time].append(ID)
+                else:
+                    self.group_array[current_time] = [ID]
+                return 1
         else:
             return 0
-
-
-    def GroupArraysInTimeSteps(self):
-        #TODO calculate all group arrays for each of the vehicles in each time steps
-        SG_1.obstacles_dic[35]["current_state_dic"]
-        
-        
-        
-        
-        

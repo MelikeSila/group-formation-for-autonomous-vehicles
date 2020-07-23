@@ -7,18 +7,18 @@
 ##############################################################################
 class DistanceSensor:
     
-    def __init__(self, vehicle_info, vehicle_graph):
+    def __init__(self, vehicle_info, vehicle_graph, current_time):
         
         self.sensor_range = 50
         self.vehicle_graph = vehicle_graph
         self.vehicle_info = vehicle_info
         
-        self.vehicles_in_range = self.__FindVehiclesInRange()
+        self.vehicles_in_range = self.__FindVehiclesInRange(current_time)
     
     ##############################################################################
     #######  __FindVehiclesInRange: find the vehicles in the given range  ########
     ##############################################################################
-    def __FindVehiclesInRange(self):
+    def __FindVehiclesInRange(self, current_time):
         
         import math
         
@@ -27,7 +27,7 @@ class DistanceSensor:
         vehicle_graph = self.vehicle_graph
         
         vehicle_ids = vehicle_graph.ego_vehicle_ids + vehicle_graph.obstacle_ids
-        vehicle_dict = {**vehicle_graph.ego_vehicles_dic, **vehicle_graph.obstacles_dic}
+        vehicle_dict = vehicle_graph.all_cars_dict
         
         vehicle = self.vehicle_info
         current_vehicle_id = vehicle["id"]
@@ -41,7 +41,7 @@ class DistanceSensor:
                 #x1 = vehicle["initial_position"][0]
                 #y1 = vehicle["initial_position"][1]
                 #distance = math.sqrt((x0 - x1)**2 + (y0 - y1)**2)
-                distance = vehicle_graph.D(vehicle_id, current_vehicle_id )
+                distance = vehicle_graph.D(vehicle_id, current_vehicle_id, current_time )
                 
                 if distance < self.sensor_range:
                     vehicles_in_range_array.append(vehicle_id)
