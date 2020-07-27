@@ -52,14 +52,22 @@ class VisualizationFunctions:
         
         isFit = True
         vehicle_objects = self.scenario_graph.vehicle_objects_dict
+        fitting_rate = 0
+        not_fit = 0
+        fit = 0
         
         #check the vehicle in the all group arrays of vehicles in the group array of current_vehicle
         for vehicle_id in willing_ordered_group_array:
             if examined_vehicle not in vehicle_objects[vehicle_id].group_array[current_time] and vehicle_id != examined_vehicle:
-                isFit = False
-                return False
+                not_fit = not_fit + 1
+            else:
+                fit = fit + 1
                 
-            
+        if not_fit != 0 :
+            fit_ratio = fit / not_fit     
+            if fit_ratio < 1:
+                isFit = False
+        
         return isFit
     ##############################################################################
     def __RemoveTheGroupedVehicles(self, ordered_group_aray,current_time):
@@ -154,10 +162,27 @@ class VisualizationFunctions:
                     if len(fit_vehicles_for_group) != 0:
                         grouped_vehicles.append(fit_vehicles_for_group)
                         self.__SetTheVehiclesGroupsDicts(current_vehicle_id, fit_vehicles_for_group, current_time)
-                    #put the current vehicle into discovered_vehicle if it has a group_id
+                
+                #put the current vehicle into discovered_vehicle if it has a group_id
                 if current_time in self.vehicle_id_group_id and current_vehicle_id in self.vehicle_id_group_id[current_time]:
                     discovered_vehicles[current_time].append(current_vehicle_id)
+        
+        for current_vehicle_id in vehicle_objects:
+            if current_time not in discovered_vehicles or current_vehicle_id not in discovered_vehicles[current_time]:
+                current_time_group_array = [current_vehicle_id]
+                    #get the vehicles which fit with all vehicles in the group array
+                fit_vehicles_for_group = self.__GetFitVehicles(current_time_group_array, current_time)
+
+                if len(fit_vehicles_for_group) != 0:
+                    grouped_vehicles.append(fit_vehicles_for_group)
+                    self.__SetTheVehiclesGroupsDicts(current_vehicle_id, fit_vehicles_for_group, current_time)
+                
+                #put the current vehicle into discovered_vehicle if it has a group_id
+                if current_time in self.vehicle_id_group_id and current_vehicle_id in self.vehicle_id_group_id[current_time]:
+                    discovered_vehicles[current_time].append(current_vehicle_id)
+                
             
+        
         self.discovered_vehicles = discovered_vehicles
     
     ##############################################################################

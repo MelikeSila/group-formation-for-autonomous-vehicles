@@ -215,7 +215,7 @@ class ScenarioGraph:
             ego_vehicle_dic["initial_lanelet_node"] = 0
             ego_vehicle_dic["planning_problem_id"] = pp.planning_problem_id
             #TODO ego_vehicle_dic["current_state_dic"]
-            ego_vehicle_dic["current_state_dic"] = {0: 67, 1: 67, 2: 67, 3: 67, 4: 67, 5: 67, 6: 67, 7: 67, 8: 67, 9: 60, 10: 60, 11: 60, 12: 60, 13: 60, 14: 60, 15: 60, 16: 60, 17: 60, 18: 60, 19: 60, 20: 60, 21: 60, 22: 60, 23: 60, 24: 60, 25: 60, 26: 60, 27: 60, 28: 60, 29: 60, 30: 60, 31: 60, 32: 60, 33: 60, 34: 60, 35: 60, 36: 60, 37: 60, 38: 60, 39: 60, 40: 60, 41: 60, 42: 60, 43: 60, 44: 60, 45: 60, 46: 60, 47: 60}
+            #ego_vehicle_dic["current_state_dic"] = {0: 67, 1: 67, 2: 67, 3: 67, 4: 67, 5: 67, 6: 67, 7: 67, 8: 67, 9: 60, 10: 60, 11: 60, 12: 60, 13: 60, 14: 60, 15: 60, 16: 60, 17: 60, 18: 60, 19: 60, 20: 60, 21: 60, 22: 60, 23: 60, 24: 60, 25: 60, 26: 60, 27: 60, 28: 60, 29: 60, 30: 60, 31: 60, 32: 60, 33: 60, 34: 60, 35: 60, 36: 60, 37: 60, 38: 60, 39: 60, 40: 60, 41: 60, 42: 60, 43: 60, 44: 60, 45: 60, 46: 60, 47: 60}
             
             ego_vehicles_dic[ego_vehicle_id] = ego_vehicle_dic
             
@@ -292,7 +292,8 @@ class ScenarioGraph:
         cars = self.all_cars_dict
         
         for car_id in cars:
-            vehicle_objects_dict[car_id] = Vehicle(cars[car_id], self)
+            if car_id > 1: #I removed the ego vehicle for last demo
+                vehicle_objects_dict[car_id] = Vehicle(cars[car_id], self)
         
         #calculate scoredict and grouparray for each time step
         #TODO
