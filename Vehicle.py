@@ -14,7 +14,7 @@ from rel_vel import rel_vel_vehicle
 
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph=1, w_vel=1, w_dist=1, w_size=1, ideal_size=100, scorelimit=1):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph=1, w_vel=-1, w_dist=-1, w_size=-1, ideal_size=10, scorelimit=-20):
         
         from Sensor import DistanceSensor
         
