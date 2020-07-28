@@ -11,10 +11,11 @@ import GraphBasedDistanceMeasure
 import rel_vel
 import numpy as np
 from rel_vel import rel_vel_vehicle
+from Visualization import VisualizationFunctions
 
 class Vehicle:
     
-    def __init__(self, vehicle_obstacle_info, vehicle_graph=1, w_vel=-1, w_dist=-1, w_size=-1, ideal_size=10, scorelimit=-20):
+    def __init__(self, vehicle_obstacle_info, vehicle_graph=1, w_vel=-1, w_dist=-1, w_size=-1, w_change=1, ideal_size=10, scorelimit=-20):
         
         from Sensor import DistanceSensor
         
@@ -30,6 +31,7 @@ class Vehicle:
         self.w_vel=w_vel
         self.w_dist=w_dist
         self.w_size=w_size
+        self.w_change=w_change
         self.ideal_size=ideal_size
         self.scorelimit=scorelimit
         
@@ -69,8 +71,17 @@ class Vehicle:
             if ID in self.distance_sensor.vehicles_in_range:
                 add_dist=self.w_dist*scenario_graph.D(ID, self.vehicle_info["id"], current_time)
                 add_vel=self.w_vel*rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
-                add_vel=0
-                score=add_vel+add_dist
+                penalty=0
+                if current_time>0:
+                    for group in VisualizationFunctions.all_groups[current_time-1]:
+                        if ID in group:
+                            if self.vehicle_info["id"] in group:
+                                penalty=0
+                            else:
+                                penalty=1
+                add_change=self.w_change*penalty
+                score=add_vel+add_dist+add_change
+
                 
                 if current_time not in score_dict:
                     score_dict[current_time] = {ID: score}
