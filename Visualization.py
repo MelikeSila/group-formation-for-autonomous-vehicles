@@ -18,6 +18,7 @@ class VisualizationFunctions:
         self.discovered_vehicles = dict()
         
         self.group_id_vehicle_ids_in_time_step = dict()
+        self.all_groups = dict()
         self.__GetGroupsInTimeStep()
         
         #vehicle_id_group_id_in_time_step = dict() #we do not need it
@@ -167,6 +168,8 @@ class VisualizationFunctions:
                 if current_time in self.vehicle_id_group_id and current_vehicle_id in self.vehicle_id_group_id[current_time]:
                     discovered_vehicles[current_time].append(current_vehicle_id)
         
+        #put the each remaining vehicles into different groups. Each group is consist of 1 vehicle.
+        # remaining vehicles mean is vehicles did not cooperate with any group
         for current_vehicle_id in vehicle_objects:
             if current_time not in discovered_vehicles or current_vehicle_id not in discovered_vehicles[current_time]:
                 current_time_group_array = [current_vehicle_id]
@@ -234,6 +237,7 @@ class VisualizationFunctions:
     #{time: {group_id: [group1], group_id: [group2]}}
     def __GetGroupsInTimeStep(self):
         
+        all_groups = dict()
         group_id_vehicle_ids_in_time_step = self.group_id_vehicle_ids_in_time_step
         #TODO give scenario to __SetGroupIds in time steps
         
@@ -241,7 +245,8 @@ class VisualizationFunctions:
             self.__CalculateLengthOfGroupArrays(current_time) # 1
             self.__SetGroupIds(current_time)
             group_id_vehicle_ids_in_time_step[current_time] = self.group_id_vehicle_ids[current_time]
-            
-        
+            all_groups[current_time] = list(self.group_id_vehicle_ids[current_time].values())
+        print(all_groups)
+        self.all_groups = all_groups
         self.group_id_vehicle_ids_in_time_step = group_id_vehicle_ids_in_time_step
         
