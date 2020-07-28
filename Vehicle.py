@@ -73,12 +73,16 @@ class Vehicle:
                 add_vel=self.w_vel*rel_vel_vehicle.rel_vel_2_vehicles(state, self.vehicle_initial_state)
                 penalty=0
                 if current_time>0:
-                    for group in VisualizationFunctions.all_groups[current_time-1]:
-                        if ID in group:
-                            if self.vehicle_info["id"] in group:
-                                penalty=0
-                            else:
-                                penalty=1
+                   # for group in visualization_function.all_groups[current_time-1]:
+                    #    if ID in group:
+                     #       if self.vehicle_info["id"] in group:
+                      #          penalty=0
+                       #     else:
+                        #        penalty=1
+                    if ID in self.group_array:
+                        penalty=0
+                    else:
+                        penalty=-1
                 add_change=self.w_change*penalty
                 score=add_vel+add_dist+add_change
 
